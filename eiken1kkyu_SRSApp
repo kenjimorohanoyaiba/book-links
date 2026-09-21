@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>準1級 想起トレーニング</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+
+    /* ---- light (default) theme ---- */
+    --bg: #EFE8D6;
+    --bg-soft: #E6DDC5;
+    --panel: #F8F3E4;
+    --paper: #F1E4BC;
+    --paper-edge: #E2D19E;
+    --ink: #2C2013;
+    --ink-soft: #5B5038;
+    --text: #22201B;
+    --text-dim: #6B6455;
+    --line: rgba(44,32,19,0.14);
+    --shadow: rgba(60,45,20,0.22);
+    --gold: #A9761E;
+    --gold-soft: #C79A3E;
+    --good: #2E6B57;
+    --good-bg: #DCEBE2;
+    --hard: #9A6A16;
+    --hard-bg: #F1E4C4;
+    --bad: #9C3A28;
+    --bad-bg: #F3DCD4;
+    --accentline: #A9761E;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  html, body { height: 100%; }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #121A26;
+      --bg-soft: #182333;
+      --panel: #1B2534;
+      --paper: #EDE1BC;
+      --paper-edge: #D9C793;
+      --ink: #2A2014;
+      --ink-soft: #4E4530;
+      --text: #E9E5D8;
+      --text-dim: #9BA3B4;
+      --line: rgba(255,255,255,0.09);
+      --shadow: rgba(0,0,0,0.45);
+      --gold: #DCAE48;
+      --gold-soft: #E8C066;
+      --good: #55B79A;
+      --good-bg: #1E3A34;
+      --hard: #E0AE4F;
+      --hard-bg: #3A311D;
+      --bad: #E17557;
+      --bad-bg: #3B241E;
+      --accentline: #DCAE48;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #121A26;
+    --bg-soft: #182333;
+    --panel: #1B2534;
+    --paper: #EDE1BC;
+    --paper-edge: #D9C793;
+    --ink: #2A2014;
+    --ink-soft: #4E4530;
+    --text: #E9E5D8;
+    --text-dim: #9BA3B4;
+    --line: rgba(255,255,255,0.09);
+    --shadow: rgba(0,0,0,0.45);
+    --gold: #DCAE48;
+    --gold-soft: #E8C066;
+    --good: #55B79A;
+    --good-bg: #1E3A34;
+    --hard: #E0AE4F;
+    --hard-bg: #3A311D;
+    --bad: #E17557;
+    --bad-bg: #3B241E;
+    --accentline: #DCAE48;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Zen Kaku Gothic New', 'Hiragino Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100%;
+  }
+  ::selection { background: var(--gold-soft); color: #1a1408; }
+
+  a, button, input, select { font-family: inherit; }
+  button { cursor: pointer; }
+
+  .app {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 20px calc(48px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* ---------- header ---------- */
+  header.top {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 20;
+    background: var(--bg);
+    padding: 16px 0 10px;
+    border-bottom: 1px solid var(--line);
+  }
+  .top-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .brand {
+    font-family: 'Shippori Mincho', serif;
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: 0.02em;
+    color: var(--text);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    white-space: nowrap;
+  }
+  .brand small {
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-weight: 500;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+  .top-actions { display: flex; align-items: center; gap: 10px; }
+  .streak-pill {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 13px; font-weight: 700; color: var(--gold);
+    background: color-mix(in srgb, var(--gold) 14%, transparent);
+    padding: 5px 10px 5px 8px; border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--gold) 30%, transparent);
+  }
+  .icon-btn {
+    width: 34px; height: 34px; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--panel);
+    color: var(--text); font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  nav.tabs {
+    display: flex; gap: 4px; margin-top: 14px;
+    overflow-x: auto; -ms-overflow-style: none; scrollbar-width: none;
+  }
+  nav.tabs::-webkit-scrollbar { display: none; }
+  nav.tabs button {
+    flex: none;
+    border: none; background: transparent;
+    color: var(--text-dim);
+    font-size: 14px; font-weight: 700;
+    padding: 8px 12px 10px;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+  }
+  nav.tabs button.active { color: var(--text); border-bottom-color: var(--accentline); }
+
+  section.view { display: none; padding-top: 22px; }
+  section.view.active { display: block; }
+
+  h2.section-title {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 18px; font-weight: 700;
+    margin: 0 0 4px;
+  }
+  p.section-sub { margin: 0 0 18px; color: var(--text-dim); font-size: 13px; }
+
+  /* ---------- settings popover ---------- */
+  .popover-wrap { position: relative; }
+  .popover {
+    position: absolute; right: 0; top: calc(100% + 8px);
+    width: 250px; background: var(--panel);
+    border: 1px solid var(--line); border-radius: 14px;
+    box-shadow: 0 12px 30px var(--shadow);
+    padding: 16px; z-index: 30;
+    display: none;
+  }
+  .popover.open { display: block; }
+  .popover label {
+    display: block; font-size: 12px; color: var(--text-dim); margin-bottom: 6px; font-weight: 700;
+  }
+  .popover input[type=number] {
+    width: 100%; padding: 8px 10px; border-radius: 8px;
+    border: 1px solid var(--line); background: var(--bg); color: var(--text);
+    font-size: 14px; margin-bottom: 14px;
+  }
+  .popover .row3 { display: flex; gap: 6px; margin-bottom: 14px; }
+  .popover .row3 button {
+    flex: 1; padding: 7px 0; border-radius: 8px; border: 1px solid var(--line);
+    background: var(--bg); color: var(--text-dim); font-size: 12px; font-weight: 700;
+  }
+  .popover .row3 button.active { color: var(--bg); background: var(--gold); border-color: var(--gold); }
+  .btn-danger-text {
+    width: 100%; padding: 9px 0; border-radius: 8px;
+    border: 1px solid var(--bad); background: transparent; color: var(--bad);
+    font-size: 12px; font-weight: 700;
+  }
+
+  /* ---------- session ---------- */
+  .session-stats {
+    display: flex; gap: 18px; margin-bottom: 18px; font-size: 13px; color: var(--text-dim);
+  }
+  .session-stats b { color: var(--text); font-size: 15px; }
+  .progress-track {
+    height: 5px; border-radius: 3px; background: var(--line); overflow: hidden; margin-bottom: 26px;
+  }
+  .progress-fill { height: 100%; background: var(--accentline); width: 0%; transition: width .3s ease; }
+
+  .stage-label {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 700; color: var(--gold);
+    background: color-mix(in srgb, var(--gold) 12%, transparent);
+    padding: 4px 10px; border-radius: 999px; margin-bottom: 16px;
+  }
+
+  .card-stage { display: flex; justify-content: center; padding: 6px 0 8px; }
+  .flashcard {
+    width: 100%; max-width: 420px;
+    background: var(--paper); color: var(--ink);
+    border-radius: 4px;
+    border: 1px solid var(--paper-edge);
+    box-shadow: 0 18px 36px var(--shadow), 0 2px 0 var(--paper-edge);
+    padding: 30px 26px 26px;
+    min-height: 260px;
+    position: relative;
+    transform: rotate(-0.6deg);
+    display: flex; flex-direction: column;
+  }
+  .flashcard::before {
+    content: ""; position: absolute; inset: 8px;
+    border: 1px dashed color-mix(in srgb, var(--ink) 18%, transparent);
+    border-radius: 2px; pointer-events: none;
+  }
+  .card-pos {
+    align-self: flex-start;
+    font-size: 11px; font-weight: 700; letter-spacing: .02em;
+    color: var(--ink-soft);
+    border: 1px solid color-mix(in srgb, var(--ink) 30%, transparent);
+    border-radius: 4px; padding: 2px 7px; margin-bottom: 22px;
+  }
+  .card-word {
+    font-family: 'Courier Prime', monospace;
+    font-weight: 700;
+    font-size: clamp(26px, 6vw, 34px);
+    line-height: 1.3;
+    text-align: center;
+    margin: 0 0 6px;
+    word-break: break-word;
+  }
+  .card-hint {
+    text-align: center; font-size: 12px; color: var(--ink-soft);
+    margin-top: auto; padding-top: 20px;
+  }
+  .card-answer { display: none; margin-top: 4px; }
+  .flashcard.revealed .card-answer { display: block; }
+  .flashcard.revealed .card-hint { display: none; }
+  .card-meaning {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 21px; font-weight: 700; text-align: center;
+    margin: 6px 0 16px;
+  }
+  .card-divider { height: 1px; background: color-mix(in srgb, var(--ink) 16%, transparent); margin: 0 0 14px; }
+  .card-example {
+    font-size: 14px; line-height: 1.7; color: var(--ink-soft); text-align: left;
+  }
+  .card-example .hl { font-weight: 700; color: var(--ink); font-style: normal; text-decoration: underline; text-decoration-color: var(--gold); text-decoration-thickness: 2px; }
+  .card-note {
+    margin-top: 12px; display: inline-block; font-size: 11.5px; font-weight: 700;
+    color: var(--ink-soft); background: color-mix(in srgb, var(--ink) 8%, transparent);
+    padding: 3px 9px; border-radius: 999px;
+  }
+
+  .reveal-btn {
+    width: 100%; max-width: 420px; margin: 22px auto 0; display: block;
+    padding: 15px 0; border-radius: 12px; border: none;
+    background: var(--gold); color: #1c1608; font-weight: 900; font-size: 15px;
+    letter-spacing: .01em;
+  }
+  .reveal-btn .key { opacity: .65; font-weight: 700; font-size: 12px; margin-left: 6px; }
+
+  .grade-row {
+    display: flex; gap: 8px; max-width: 420px; margin: 22px auto 0;
+  }
+  .grade-btn {
+    flex: 1; border-radius: 12px; border: 1px solid var(--line);
+    padding: 13px 4px 11px; text-align: center; background: var(--panel);
+  }
+  .grade-btn .g-label { display: block; font-weight: 800; font-size: 13.5px; }
+  .grade-btn .g-key { display: block; font-size: 10.5px; color: var(--text-dim); margin-top: 3px; }
+  .grade-btn.bad { border-color: color-mix(in srgb, var(--bad) 45%, var(--line)); }
+  .grade-btn.bad .g-label { color: var(--bad); }
+  .grade-btn.hard { border-color: color-mix(in srgb, var(--hard) 45%, var(--line)); }
+  .grade-btn.hard .g-label { color: var(--hard); }
+  .grade-btn.good { border-color: color-mix(in srgb, var(--good) 45%, var(--line)); }
+  .grade-btn.good .g-label { color: var(--good); }
+
+  .session-empty, .session-summary {
+    max-width: 420px; margin: 10px auto 0; text-align: center;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 16px;
+    padding: 34px 24px;
+  }
+  .session-empty .big-emoji, .session-summary .big-emoji { font-size: 30px; margin-bottom: 10px; }
+  .session-empty h3, .session-summary h3 {
+    font-family: 'Shippori Mincho', serif; font-size: 19px; margin: 0 0 8px;
+  }
+  .session-empty p, .session-summary p { color: var(--text-dim); font-size: 13.5px; margin: 0 0 20px; line-height: 1.6; }
+  .summary-stats { display: flex; justify-content: center; gap: 26px; margin-bottom: 22px; }
+  .summary-stats div b { display: block; font-size: 22px; font-family: 'Shippori Mincho', serif; }
+  .summary-stats div span { font-size: 11.5px; color: var(--text-dim); }
+  .btn-primary {
+    display: inline-block; width: 100%; padding: 13px 0; border-radius: 12px;
+    border: none; background: var(--accentline); color: var(--bg); font-weight: 800; font-size: 14px;
+    margin-bottom: 10px;
+  }
+  .btn-secondary {
+    display: inline-block; width: 100%; padding: 12px 0; border-radius: 12px;
+    border: 1px solid var(--line); background: transparent; color: var(--text); font-weight: 700; font-size: 13.5px;
+  }
+
+  /* ---------- word bank ---------- */
+  .wb-controls { margin-bottom: 16px; }
+  .search-box {
+    width: 100%; padding: 11px 14px; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--panel); color: var(--text);
+    font-size: 14px; margin-bottom: 12px;
+  }
+  .chip-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
+  .chip {
+    padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line);
+    background: var(--panel); color: var(--text-dim); font-size: 12.5px; font-weight: 700;
+  }
+  .chip.active { background: var(--accentline); color: var(--bg); border-color: var(--accentline); }
+
+  .add-toggle {
+    width: 100%; padding: 12px 0; margin: 14px 0 6px; border-radius: 10px;
+    border: 1px dashed var(--line); background: transparent; color: var(--text-dim);
+    font-size: 13px; font-weight: 700;
+  }
+  .add-form {
+    display: none; background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+    padding: 16px; margin: 10px 0 18px;
+  }
+  .add-form.open { display: block; }
+  .add-form .frow { margin-bottom: 10px; }
+  .add-form label { display: block; font-size: 11.5px; color: var(--text-dim); font-weight: 700; margin-bottom: 5px; }
+  .add-form input, .add-form select, .add-form textarea {
+    width: 100%; padding: 9px 11px; border-radius: 8px; border: 1px solid var(--line);
+    background: var(--bg); color: var(--text); font-size: 13.5px;
+  }
+  .add-form textarea { resize: vertical; min-height: 52px; }
+  .add-form .frow2 { display: flex; gap: 10px; }
+  .add-form .frow2 > div { flex: 1; }
+
+  .word-list { border-top: 1px solid var(--line); }
+  .word-row {
+    padding: 13px 2px; border-bottom: 1px solid var(--line); cursor: pointer;
+  }
+  .word-row-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .word-row-word { font-family: 'Courier Prime', monospace; font-weight: 700; font-size: 15px; }
+  .word-row-meaning { font-size: 12.5px; color: var(--text-dim); margin-top: 3px; }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  .status-dot.new { background: var(--text-dim); }
+  .status-dot.learning { background: var(--hard); }
+  .status-dot.retained { background: var(--gold); }
+  .status-dot.mastered { background: var(--good); }
+  .status-dot.leech { background: var(--bad); }
+  .word-row-detail { display: none; margin-top: 10px; font-size: 13.5px; line-height: 1.7; color: var(--text-dim); }
+  .word-row.open .word-row-detail { display: block; }
+  .word-row-detail .hl { color: var(--text); font-weight: 700; }
+  .row-actions { margin-top: 10px; display: flex; gap: 8px; }
+  .row-actions button {
+    font-size: 11.5px; font-weight: 700; padding: 5px 10px; border-radius: 7px;
+    border: 1px solid var(--line); background: var(--bg); color: var(--text-dim);
+  }
+  .row-actions button.del { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 40%, var(--line)); }
+  .empty-note { text-align: center; padding: 30px 0; color: var(--text-dim); font-size: 13.5px; }
+
+  /* ---------- compare ---------- */
+  .group-select {
+    width: 100%; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--line);
+    background: var(--panel); color: var(--text); font-size: 14px; margin-bottom: 18px; font-weight: 700;
+  }
+  .compare-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  @media (min-width: 560px) { .compare-grid { grid-template-columns: 1fr 1fr; } }
+  .compare-card {
+    background: var(--paper); color: var(--ink); border: 1px solid var(--paper-edge);
+    border-radius: 10px; padding: 16px;
+  }
+  .compare-card .cw { font-family: 'Courier Prime', monospace; font-weight: 700; font-size: 17px; }
+  .compare-card .cp { font-size: 10.5px; color: var(--ink-soft); font-weight: 700; margin-left: 6px; }
+  .compare-card .cm { font-family: 'Shippori Mincho', serif; font-weight: 700; font-size: 15px; margin: 6px 0 8px; }
+  .compare-card .ce { font-size: 12.5px; color: var(--ink-soft); line-height: 1.6; }
+  .compare-card .ce .hl { font-weight: 700; color: var(--ink); text-decoration: underline; text-decoration-color: var(--gold); }
+
+  /* ---------- stats ---------- */
+  .stat-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 26px;
+  }
+  @media (min-width: 480px) { .stat-grid { grid-template-columns: repeat(3, 1fr); } }
+  .stat-card {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px;
+  }
+  .stat-card b { display: block; font-family: 'Shippori Mincho', serif; font-size: 24px; }
+  .stat-card span { font-size: 12px; color: var(--text-dim); }
+  .bar-list { display: flex; flex-direction: column; gap: 8px; }
+  .bar-row { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-dim); }
+  .bar-row .lbl { width: 68px; flex: none; }
+  .bar-row .track { flex: 1; height: 12px; background: var(--line); border-radius: 6px; overflow: hidden; }
+  .bar-row .fill { height: 100%; background: var(--accentline); }
+  .bar-row .val { width: 26px; flex: none; text-align: right; color: var(--text); font-weight: 700; }
+
+  footer.foot {
+    text-align: center; padding: 30px 0 6px; font-size: 11.5px; color: var(--text-dim);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+  .visually-hidden { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="top">
+    <div class="top-row">
+      <div class="brand">準1級<small>想起トレーニング</small></div>
+      <div class="top-actions">
+        <div class="streak-pill">🔥 <span id="streakCount">0</span></div>
+        <div class="popover-wrap">
+          <button class="icon-btn" id="settingsBtn" aria-label="設定">⚙</button>
+          <div class="popover" id="settingsPopover">
+            <label for="newPerDayInput">1日の新規語数</label>
+            <input type="number" id="newPerDayInput" min="5" max="40" step="1">
+            <label>テーマ</label>
+            <div class="row3">
+              <button data-theme-choice="system">自動</button>
+              <button data-theme-choice="light">ライト</button>
+              <button data-theme-choice="dark">ダーク</button>
+            </div>
+            <button class="btn-danger-text" id="resetAllBtn">学習データをリセット</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <nav class="tabs">
+      <button data-tab="session" class="active">今日の学習</button>
+      <button data-tab="wordbank">単語帳</button>
+      <button data-tab="compare">比較</button>
+      <button data-tab="stats">統計</button>
+    </nav>
+  </header>
+
+  <!-- ================= SESSION ================= -->
+  <section class="view active" id="view-session">
+    <div id="sessionRoot"></div>
+  </section>
+
+  <!-- ================= WORD BANK ================= -->
+  <section class="view" id="view-wordbank">
+    <h2 class="section-title">単語帳</h2>
+    <p class="section-sub">見出し語をタップすると意味と例文を確認できます。長文で出会った単語もここから追加しましょう。</p>
+    <div class="wb-controls">
+      <input type="text" class="search-box" id="wbSearch" placeholder="単語・意味で検索">
+      <div class="chip-row" id="wbFilters">
+        <button class="chip active" data-filter="all">すべて</button>
+        <button class="chip" data-filter="new">新規</button>
+        <button class="chip" data-filter="learning">学習中</button>
+        <button class="chip" data-filter="mastered">習得済み</button>
+        <button class="chip" data-filter="leech">苦手</button>
+      </div>
+    </div>
+    <button class="add-toggle" id="addToggleBtn">＋ 単語を追加する（長文で見つけた語など）</button>
+    <div class="add-form" id="addForm">
+      <div class="frow">
+        <label>英単語</label>
+        <input type="text" id="fWord" placeholder="例：ambiguous">
+      </div>
+      <div class="frow2">
+        <div class="frow">
+          <label>品詞</label>
+          <select id="fPos">
+            <option value="形">形容詞</option>
+            <option value="動">動詞</option>
+            <option value="名">名詞</option>
+            <option value="副">副詞</option>
+            <option value="句">句・熟語</option>
+          </select>
+        </div>
+        <div class="frow">
+          <label>グループ（任意）</label>
+          <input type="text" id="fGroup" placeholder="例：似た単語のタグ">
+        </div>
+      </div>
+      <div class="frow">
+        <label>意味</label>
+        <input type="text" id="fMeaning" placeholder="例：あいまいな">
+      </div>
+      <div class="frow">
+        <label>例文</label>
+        <textarea id="fExample" placeholder="その単語を使った英文を入れておくと定着しやすくなります"></textarea>
+      </div>
+      <button class="btn-primary" id="fSubmit" style="margin-top:4px;">単語帳に追加</button>
+    </div>
+    <div class="word-list" id="wordList"></div>
+  </section>
+
+  <!-- ================= COMPARE ================= -->
+  <section class="view" id="view-compare">
+    <h2 class="section-title">似た単語を比べる</h2>
+    <p class="section-sub">混同しやすい単語はグループでまとめて確認すると区別がつきやすくなります。</p>
+    <select class="group-select" id="groupSelect"></select>
+    <div class="compare-grid" id="compareGrid"></div>
+  </section>
+
+  <!-- ================= STATS ================= -->
+  <section class="view" id="view-stats">
+    <h2 class="section-title">学習の記録</h2>
+    <p class="section-sub">思い出せた単語が増えるほど、ここの数字が育ちます。</p>
+    <div class="stat-grid" id="statGrid"></div>
+    <h2 class="section-title" style="font-size:15px;">直近7日間の復習数</h2>
+    <div class="bar-list" id="barList"></div>
+  </section>
+
+  <footer class="foot">見て分かる、から思い出せる、へ。</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ================= 語彙データ ================= */
+var VOCAB = [
+{id:"w1",word:"obstinate",pos:"形",meaning:"頑固な、強情な",example:"He remained {h}obstinate{/h} despite everyone's advice.",group:"stubborn"},
+{id:"w2",word:"stubborn",pos:"形",meaning:"頑固な",example:"She's too {h}stubborn{/h} to admit she was wrong.",group:"stubborn"},
+{id:"w3",word:"adamant",pos:"形",meaning:"頑として譲らない",example:"He was {h}adamant{/h} that he would not change his mind.",group:"stubborn"},
+{id:"w4",word:"reluctant",pos:"形",meaning:"気が進まない、しぶしぶの",example:"She was {h}reluctant{/h} to sign the contract.",group:"reluctant"},
+{id:"w5",word:"hesitant",pos:"形",meaning:"ためらいがちな",example:"He seemed {h}hesitant{/h} to speak in public.",group:"reluctant"},
+{id:"w6",word:"unwilling",pos:"形",meaning:"~する気がない",example:"They were {h}unwilling{/h} to compromise.",group:"reluctant"},
+{id:"w7",word:"indifferent",pos:"形",meaning:"無関心な",example:"He remained {h}indifferent{/h} to the criticism.",group:"indifferent"},
+{id:"w8",word:"apathetic",pos:"形",meaning:"無気力な、無関心な",example:"Many young voters seem {h}apathetic{/h} about politics.",group:"indifferent"},
+{id:"w9",word:"impartial",pos:"形",meaning:"公平な",example:"A judge must remain {h}impartial{/h}.",group:"fairness"},
+{id:"w10",word:"biased",pos:"形",meaning:"偏った",example:"The report was clearly {h}biased{/h} in favor of the company.",group:"fairness"},
+{id:"w11",word:"meticulous",pos:"形",meaning:"几帳面な、細心の",example:"She is {h}meticulous{/h} about keeping records.",group:null},
+{id:"w12",word:"diligent",pos:"形",meaning:"勤勉な",example:"He is a {h}diligent{/h} student who never misses class.",group:null},
+{id:"w13",word:"audacious",pos:"形",meaning:"大胆な、ずうずうしい",example:"It was an {h}audacious{/h} plan to cross the ocean alone.",group:null},
+{id:"w14",word:"arrogant",pos:"形",meaning:"傲慢な",example:"His {h}arrogant{/h} attitude annoyed his coworkers.",group:null},
+{id:"w15",word:"humble",pos:"形",meaning:"謙虚な",example:"Despite his success, he remained {h}humble{/h}.",group:null},
+{id:"w16",word:"candid",pos:"形",meaning:"率直な",example:"She gave a {h}candid{/h} opinion about the proposal.",group:null},
+{id:"w17",word:"discreet",pos:"形",meaning:"思慮深い、目立たない",example:"Please be {h}discreet{/h} about this matter.",group:null},
+{id:"w18",word:"prudent",pos:"形",meaning:"賢明な、慎重な",example:"It would be {h}prudent{/h} to save some money each month.",group:null},
+{id:"w19",word:"reckless",pos:"形",meaning:"無謀な",example:"{h}Reckless{/h} driving caused the accident.",group:null},
+{id:"w20",word:"naive",pos:"形",meaning:"世間知らずな",example:"It was {h}naive{/h} of him to trust a stranger with his money.",group:null},
+{id:"w21",word:"gullible",pos:"形",meaning:"だまされやすい",example:"{h}Gullible{/h} investors fell for the scam.",group:null},
+{id:"w22",word:"versatile",pos:"形",meaning:"多才な、多用途の",example:"This tool is {h}versatile{/h} enough for many tasks.",group:null},
+{id:"w23",word:"eloquent",pos:"形",meaning:"雄弁な",example:"She gave an {h}eloquent{/h} speech at the ceremony.",group:null},
+{id:"w24",word:"pragmatic",pos:"形",meaning:"実用的な、現実的な",example:"We need a {h}pragmatic{/h} solution, not an ideal one.",group:null},
+{id:"w25",word:"skeptical",pos:"形",meaning:"懐疑的な",example:"Scientists remained {h}skeptical{/h} of the new theory.",group:null},
+{id:"w26",word:"meddlesome",pos:"形",meaning:"お節介な",example:"Her {h}meddlesome{/h} neighbor always asks personal questions.",group:null},
+{id:"w27",word:"fastidious",pos:"形",meaning:"好みがうるさい、几帳面すぎる",example:"He is {h}fastidious{/h} about the way his desk is arranged.",group:null},
+{id:"w28",word:"anxious",pos:"形",meaning:"不安な",example:"She felt {h}anxious{/h} before the exam.",group:null},
+{id:"w29",word:"apprehensive",pos:"形",meaning:"懸念して、不安な",example:"He was {h}apprehensive{/h} about the surgery.",group:null},
+{id:"w30",word:"ecstatic",pos:"形",meaning:"有頂天の、大喜びの",example:"They were {h}ecstatic{/h} when they won the championship.",group:null},
+{id:"w31",word:"indignant",pos:"形",meaning:"憤慨した",example:"He was {h}indignant{/h} at being falsely accused.",group:null},
+{id:"w32",word:"resentful",pos:"形",meaning:"恨みを抱いた",example:"She felt {h}resentful{/h} toward her former boss.",group:null},
+{id:"w33",word:"despondent",pos:"形",meaning:"落胆した",example:"He grew {h}despondent{/h} after losing his job.",group:null},
+{id:"w34",word:"weary",pos:"形",meaning:"疲れきった",example:"The soldiers were {h}weary{/h} after the long march.",group:null},
+{id:"w35",word:"lethargic",pos:"形",meaning:"無気力な、だるい",example:"The heat made everyone feel {h}lethargic{/h}.",group:null},
+{id:"w36",word:"euphoric",pos:"形",meaning:"幸福感に満ちた",example:"She felt {h}euphoric{/h} after finishing the marathon.",group:null},
+{id:"w37",word:"exacerbate",pos:"動",meaning:"悪化させる",example:"The drought {h}exacerbated{/h} the food shortage.",group:"worsen-ease"},
+{id:"w38",word:"alleviate",pos:"動",meaning:"緩和する",example:"The medicine helped {h}alleviate{/h} the pain.",group:"worsen-ease"},
+{id:"w39",word:"mitigate",pos:"動",meaning:"軽減する、緩和する",example:"The company took steps to {h}mitigate{/h} the damage.",group:"worsen-ease"},
+{id:"w40",word:"eradicate",pos:"動",meaning:"根絶する",example:"Doctors hope to {h}eradicate{/h} the disease worldwide.",group:null},
+{id:"w41",word:"perpetuate",pos:"動",meaning:"永続させる",example:"The policy only {h}perpetuates{/h} inequality.",group:null},
+{id:"w42",word:"undermine",pos:"動",meaning:"弱体化させる",example:"Constant criticism can {h}undermine{/h} one's confidence.",group:null},
+{id:"w43",word:"reinforce",pos:"動",meaning:"強化する",example:"The new evidence {h}reinforced{/h} her argument.",group:null},
+{id:"w44",word:"jeopardize",pos:"動",meaning:"危険にさらす",example:"One mistake could {h}jeopardize{/h} the entire project.",group:null},
+{id:"w45",word:"exploit",pos:"動",meaning:"利用する、搾取する",example:"The company was accused of {h}exploiting{/h} cheap labor.",group:null},
+{id:"w46",word:"reconcile",pos:"動",meaning:"和解させる",example:"It took years for the two countries to {h}reconcile{/h}.",group:null},
+{id:"w47",word:"alienate",pos:"動",meaning:"疎外する",example:"His harsh remarks {h}alienated{/h} many of his supporters.",group:null},
+{id:"w48",word:"coerce",pos:"動",meaning:"強制する",example:"They were {h}coerced{/h} into signing the agreement.",group:null},
+{id:"w49",word:"deceive",pos:"動",meaning:"欺く",example:"He {h}deceived{/h} investors about the company's profits.",group:null},
+{id:"w50",word:"fabricate",pos:"動",meaning:"捏造する",example:"The witness {h}fabricated{/h} part of the story.",group:null},
+{id:"w51",word:"allege",pos:"動",meaning:"(証拠なく)主張する",example:"The article {h}alleges{/h} that the mayor took bribes.",group:null},
+{id:"w52",word:"refute",pos:"動",meaning:"反論する、論破する",example:"The scientist {h}refuted{/h} the claims with new data.",group:null},
+{id:"w53",word:"ascertain",pos:"動",meaning:"確かめる",example:"Investigators tried to {h}ascertain{/h} the cause of the fire.",group:"infer"},
+{id:"w54",word:"discern",pos:"動",meaning:"見分ける",example:"It was hard to {h}discern{/h} any difference between the two.",group:"infer"},
+{id:"w55",word:"infer",pos:"動",meaning:"推論する",example:"We can {h}infer{/h} from the data that sales are rising.",group:"infer"},
+{id:"w56",word:"deduce",pos:"動",meaning:"推論する",example:"From the clues, the detective {h}deduced{/h} who the thief was.",group:"infer"},
+{id:"w57",word:"speculate",pos:"動",meaning:"推測する",example:"Analysts {h}speculate{/h} that prices will rise next year.",group:"infer"},
+{id:"w58",word:"contemplate",pos:"動",meaning:"熟考する",example:"She {h}contemplated{/h} quitting her job.",group:null},
+{id:"w59",word:"procrastinate",pos:"動",meaning:"先延ばしにする",example:"He always {h}procrastinates{/h} until the deadline is near.",group:null},
+{id:"w60",word:"relinquish",pos:"動",meaning:"放棄する",example:"The king was forced to {h}relinquish{/h} his throne.",group:null},
+{id:"w61",word:"forfeit",pos:"動",meaning:"没収される、失う",example:"He {h}forfeited{/h} his deposit by canceling late.",group:null},
+{id:"w62",word:"allocate",pos:"動",meaning:"割り当てる",example:"The government {h}allocated{/h} more funds to education.",group:null},
+{id:"w63",word:"proliferate",pos:"動",meaning:"急増する",example:"Fake news has {h}proliferated{/h} on social media.",group:"increase-decrease"},
+{id:"w64",word:"dwindle",pos:"動",meaning:"徐々に減る",example:"Their savings {h}dwindled{/h} after months of unemployment.",group:"increase-decrease"},
+{id:"w65",word:"plummet",pos:"動",meaning:"急落する",example:"Stock prices {h}plummeted{/h} after the announcement.",group:"increase-decrease"},
+{id:"w66",word:"soar",pos:"動",meaning:"急上昇する",example:"Demand for the product {h}soared{/h} last year.",group:"increase-decrease"},
+{id:"w67",word:"fluctuate",pos:"動",meaning:"変動する",example:"Exchange rates {h}fluctuate{/h} daily.",group:"increase-decrease"},
+{id:"w68",word:"stagnate",pos:"動",meaning:"停滞する",example:"The economy has {h}stagnated{/h} for a decade.",group:"thrive-decline"},
+{id:"w69",word:"deteriorate",pos:"動",meaning:"悪化する",example:"His health began to {h}deteriorate{/h} rapidly.",group:"thrive-decline"},
+{id:"w70",word:"flourish",pos:"動",meaning:"繁栄する",example:"The business {h}flourished{/h} after the renovation.",group:"thrive-decline"},
+{id:"w71",word:"thrive",pos:"動",meaning:"成功する、繁栄する",example:"Some plants {h}thrive{/h} in shade.",group:"thrive-decline"},
+{id:"w72",word:"discrepancy",pos:"名",meaning:"食い違い",example:"There was a {h}discrepancy{/h} between the two reports.",group:null},
+{id:"w73",word:"controversy",pos:"名",meaning:"論争",example:"The proposal sparked a heated {h}controversy{/h}.",group:null},
+{id:"w74",word:"consensus",pos:"名",meaning:"総意、合意",example:"The committee finally reached a {h}consensus{/h}.",group:null},
+{id:"w75",word:"dilemma",pos:"名",meaning:"板挟み、ジレンマ",example:"She faced a {h}dilemma{/h} about which job to accept.",group:null},
+{id:"w76",word:"paradox",pos:"名",meaning:"逆説、矛盾",example:"It's a {h}paradox{/h} that the more we know, the more questions arise.",group:null},
+{id:"w77",word:"ambiguity",pos:"名",meaning:"あいまいさ",example:"The contract's wording left room for {h}ambiguity{/h}.",group:null},
+{id:"w78",word:"premise",pos:"名",meaning:"前提",example:"His argument is based on a false {h}premise{/h}.",group:null},
+{id:"w79",word:"criterion",pos:"名",meaning:"基準（複数形はcriteria）",example:"Price was not the only {h}criterion{/h} for choosing a supplier.",group:null},
+{id:"w80",word:"prerequisite",pos:"名",meaning:"前提条件",example:"Basic math is a {h}prerequisite{/h} for this course.",group:null},
+{id:"w81",word:"implication",pos:"名",meaning:"影響、示唆",example:"The decision has serious {h}implications{/h} for the economy.",group:null},
+{id:"w82",word:"repercussion",pos:"名",meaning:"影響、余波",example:"The scandal had political {h}repercussions{/h}.",group:null},
+{id:"w83",word:"aftermath",pos:"名",meaning:"（悪い出来事の）余波",example:"Many buildings were destroyed in the {h}aftermath{/h} of the earthquake.",group:null},
+{id:"w84",word:"calamity",pos:"名",meaning:"災難",example:"The flood was the worst {h}calamity{/h} in the town's history.",group:null},
+{id:"w85",word:"turmoil",pos:"名",meaning:"混乱",example:"The country was in {h}turmoil{/h} after the coup.",group:null},
+{id:"w86",word:"upheaval",pos:"名",meaning:"大変動",example:"The industry went through major {h}upheaval{/h} last year.",group:null},
+{id:"w87",word:"adversity",pos:"名",meaning:"逆境",example:"She showed great courage in the face of {h}adversity{/h}.",group:null},
+{id:"w88",word:"resilience",pos:"名",meaning:"回復力、粘り強さ",example:"The city showed remarkable {h}resilience{/h} after the disaster.",group:null},
+{id:"w89",word:"integrity",pos:"名",meaning:"誠実さ、高潔",example:"He is known for his {h}integrity{/h} and honesty.",group:null},
+{id:"w90",word:"credibility",pos:"名",meaning:"信頼性",example:"The scandal damaged the politician's {h}credibility{/h}.",group:null},
+{id:"w91",word:"legitimacy",pos:"名",meaning:"正当性",example:"Critics questioned the {h}legitimacy{/h} of the election.",group:null},
+{id:"w92",word:"autonomy",pos:"名",meaning:"自治、自主性",example:"The region was granted greater {h}autonomy{/h}.",group:null},
+{id:"w93",word:"sovereignty",pos:"名",meaning:"主権",example:"The treaty respects the {h}sovereignty{/h} of each nation.",group:null},
+{id:"w94",word:"surveillance",pos:"名",meaning:"監視",example:"The area is under constant {h}surveillance{/h}.",group:null},
+{id:"w95",word:"scrutiny",pos:"名",meaning:"精査",example:"The company's finances came under {h}scrutiny{/h}.",group:null},
+{id:"w96",word:"discretion",pos:"名",meaning:"裁量、思慮分別",example:"Teachers use {h}discretion{/h} when grading essays.",group:null},
+{id:"w97",word:"subsidy",pos:"名",meaning:"補助金",example:"Farmers receive a government {h}subsidy{/h}.",group:null},
+{id:"w98",word:"tariff",pos:"名",meaning:"関税",example:"The government imposed a {h}tariff{/h} on imported steel.",group:null},
+{id:"w99",word:"deficit",pos:"名",meaning:"赤字",example:"The country is running a huge budget {h}deficit{/h}.",group:null},
+{id:"w100",word:"surplus",pos:"名",meaning:"黒字、余剰",example:"The factory produced a {h}surplus{/h} of goods.",group:null},
+{id:"w101",word:"revenue",pos:"名",meaning:"歳入、収益",example:"The company's {h}revenue{/h} increased by ten percent.",group:null},
+{id:"w102",word:"expenditure",pos:"名",meaning:"支出",example:"Household {h}expenditure{/h} rose sharply last year.",group:null},
+{id:"w103",word:"inflation",pos:"名",meaning:"インフレ",example:"{h}Inflation{/h} has driven up the cost of living.",group:null},
+{id:"w104",word:"recession",pos:"名",meaning:"不景気",example:"Many businesses closed during the {h}recession{/h}.",group:null},
+{id:"w105",word:"monopoly",pos:"名",meaning:"独占",example:"The firm had a {h}monopoly{/h} on the local market.",group:null},
+{id:"w106",word:"infrastructure",pos:"名",meaning:"インフラ、社会基盤",example:"The city invested heavily in {h}infrastructure{/h}.",group:null},
+{id:"w107",word:"feasible",pos:"形",meaning:"実行可能な",example:"The plan is technically {h}feasible{/h} but expensive.",group:"feasible"},
+{id:"w108",word:"viable",pos:"形",meaning:"実行可能な、存続可能な",example:"They need a financially {h}viable{/h} business model.",group:"feasible"},
+{id:"w109",word:"plausible",pos:"形",meaning:"もっともらしい",example:"His excuse sounded {h}plausible{/h} at first.",group:"feasible"},
+{id:"w110",word:"inevitable",pos:"形",meaning:"避けられない",example:"Change is {h}inevitable{/h} in a growing company.",group:null},
+{id:"w111",word:"redundant",pos:"形",meaning:"余分な、冗長な",example:"Some of the information in the report is {h}redundant{/h}.",group:null},
+{id:"w112",word:"obsolete",pos:"形",meaning:"時代遅れの",example:"The old machines have become {h}obsolete{/h}.",group:null},
+{id:"w113",word:"pertinent",pos:"形",meaning:"関連のある",example:"Please provide any {h}pertinent{/h} details.",group:null},
+{id:"w114",word:"ubiquitous",pos:"形",meaning:"至る所にある",example:"Smartphones have become {h}ubiquitous{/h}.",group:null},
+{id:"w115",word:"explicit",pos:"形",meaning:"明確な",example:"She gave {h}explicit{/h} instructions on how to proceed.",group:"explicit-implicit"},
+{id:"w116",word:"implicit",pos:"形",meaning:"暗黙の",example:"There was an {h}implicit{/h} agreement between them.",group:"explicit-implicit"},
+{id:"w117",word:"covert",pos:"形",meaning:"秘密の",example:"The agency carried out a {h}covert{/h} operation.",group:"covert-overt"},
+{id:"w118",word:"overt",pos:"形",meaning:"公然の、明白な",example:"There was {h}overt{/h} hostility between the two leaders.",group:"covert-overt"},
+{id:"w119",word:"innate",pos:"形",meaning:"生まれつきの",example:"Some believe musical talent is {h}innate{/h}.",group:"innate-acquired"},
+{id:"w120",word:"acquired",pos:"形",meaning:"後天的な",example:"Language is largely an {h}acquired{/h} skill.",group:"innate-acquired"},
+{id:"w121",word:"inherent",pos:"形",meaning:"固有の、本質的な",example:"Risk is {h}inherent{/h} in any investment.",group:null},
+{id:"w122",word:"superficial",pos:"形",meaning:"表面的な",example:"His knowledge of the subject is only {h}superficial{/h}.",group:null},
+{id:"w123",word:"profound",pos:"形",meaning:"深遠な、重大な",example:"The book had a {h}profound{/h} effect on her thinking.",group:null},
+{id:"w124",word:"subtle",pos:"形",meaning:"微妙な",example:"There's a {h}subtle{/h} difference between the two words.",group:null},
+{id:"w125",word:"blatant",pos:"形",meaning:"露骨な",example:"That was a {h}blatant{/h} lie.",group:null},
+{id:"w126",word:"meager",pos:"形",meaning:"乏しい、わずかな",example:"He survived on a {h}meager{/h} salary.",group:null},
+{id:"w127",word:"ample",pos:"形",meaning:"十分な、豊富な",example:"We have {h}ample{/h} time to finish the project.",group:null},
+{id:"w128",word:"scarce",pos:"形",meaning:"乏しい、不足している",example:"Clean water is {h}scarce{/h} in the region.",group:null},
+{id:"w129",word:"abundant",pos:"形",meaning:"豊富な",example:"The area has {h}abundant{/h} natural resources.",group:null},
+{id:"w130",word:"comply with",pos:"句",meaning:"~に従う",example:"All employees must {h}comply with{/h} the new safety rules.",group:"obey"},
+{id:"w131",word:"adhere to",pos:"句",meaning:"~を順守する",example:"Drivers must {h}adhere to{/h} the speed limit.",group:"obey"},
+{id:"w132",word:"conform to",pos:"句",meaning:"~に適合する",example:"The building must {h}conform to{/h} fire safety standards.",group:"obey"},
+{id:"w133",word:"refrain from",pos:"句",meaning:"~を控える",example:"Please {h}refrain from{/h} smoking in this area.",group:"refrain"},
+{id:"w134",word:"abstain from",pos:"句",meaning:"（投票などを）棄権する、控える",example:"Two members chose to {h}abstain from{/h} the vote.",group:"refrain"},
+{id:"w135",word:"resort to",pos:"句",meaning:"~に頼る、~に訴える",example:"The strikers threatened to {h}resort to{/h} violence.",group:"resort"},
+{id:"w136",word:"capitalize on",pos:"句",meaning:"~を活用する",example:"The company {h}capitalized on{/h} the growing demand.",group:"resort"},
+{id:"w137",word:"account for",pos:"句",meaning:"~を説明する、~の割合を占める",example:"Fuel costs {h}account for{/h} a large part of the budget.",group:null},
+{id:"w138",word:"compensate for",pos:"句",meaning:"~を埋め合わせる",example:"Nothing can {h}compensate for{/h} the loss of a loved one.",group:null},
+{id:"w139",word:"succumb to",pos:"句",meaning:"~に屈する、負ける",example:"He finally {h}succumbed to{/h} the pressure and resigned.",group:null}
+];
+
+var GROUP_LABELS = {
+  "stubborn":"頑固さを表す語","reluctant":"気が進まない様子","indifferent":"無関心",
+  "fairness":"公平・偏り","worsen-ease":"悪化させる／緩和する","infer":"推し量る動詞",
+  "increase-decrease":"急な増減","thrive-decline":"繁栄・停滞","feasible":"実行可能",
+  "explicit-implicit":"明示的／暗示的","covert-overt":"秘密の／公然の","innate-acquired":"先天的／後天的",
+  "obey":"~に従う（句動詞）","refrain":"~を控える（句動詞）","resort":"~に頼る・活用する（句動詞）"
+};
+
+/* ================= 状態管理 ================= */
+var STORE_KEY = "e1srs_state_v2";
+var INTERVALS = [1,3,7,14,30,60,120]; // box(1-index後) -> days
+
+function todayStr(){
+  var d = new Date();
+  return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+}
+function addDays(base, n){
+  var d = new Date(base + "T00:00:00");
+  d.setDate(d.getDate() + n);
+  return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+}
+function daysBetween(a,b){
+  var da = new Date(a+"T00:00:00"), db = new Date(b+"T00:00:00");
+  return Math.round((db-da)/86400000);
+}
+
+var defaultState = {
+  cards: {},
+  custom: [],
+  settings: { newPerDay: 15, theme: "system" },
+  today: { date: todayStr(), newIntroduced: 0 },
+  streak: { count: 0, lastDate: null },
+  log: {}
+};
+
+var state = loadState();
+
+function loadState(){
+  try {
+    var raw = localStorage.getItem(STORE_KEY);
+    if (!raw) return JSON.parse(JSON.stringify(defaultState));
+    var parsed = JSON.parse(raw);
+    parsed.cards = parsed.cards || {};
+    parsed.custom = parsed.custom || [];
+    parsed.settings = Object.assign({newPerDay:15,theme:"system"}, parsed.settings||{});
+    parsed.today = parsed.today || {date: todayStr(), newIntroduced:0};
+    parsed.streak = parsed.streak || {count:0,lastDate:null};
+    parsed.log = parsed.log || {};
+    return parsed;
+  } catch(e){
+    console.error("state load failed", e);
+    return JSON.parse(JSON.stringify(defaultState));
+  }
+}
+function saveState(){
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+  catch(e){ console.error("state save failed", e); }
+}
+
+function allWords(){
+  return VOCAB.concat(state.custom);
+}
+function wordById(id){
+  var found = null;
+  allWords().forEach(function(w){ if (w.id === id) found = w; });
+  return found;
+}
+function cardState(id){
+  if (!state.cards[id]) {
+    state.cards[id] = { box:0, next:null, seen:false, reps:0, lapses:0, lastGrade:null };
+  }
+  return state.cards[id];
+}
+
+function rollDailyIfNeeded(){
+  var t = todayStr();
+  if (state.today.date !== t) {
+    state.today = { date: t, newIntroduced: 0 };
+    saveState();
+  }
+}
+
+function bumpStreakOnActivity(){
+  var t = todayStr();
+  if (state.streak.lastDate === t) return;
+  if (state.streak.lastDate) {
+    var gap = daysBetween(state.streak.lastDate, t);
+    state.streak.count = (gap === 1) ? state.streak.count + 1 : 1;
+  } else {
+    state.streak.count = 1;
+  }
+  state.streak.lastDate = t;
+  saveState();
+}
+
+function logToday(field, n){
+  var t = todayStr();
+  if (!state.log[t]) state.log[t] = {reviewed:0, newCount:0, correct:0};
+  state.log[t][field] += n;
+}
+
+/* ================= 語のステータス判定 ================= */
+function statusOf(id){
+  var cs = cardState(id);
+  if (!cs.seen) return "new";
+  if (cs.lapses >= 3) return "leech";
+  if (cs.box >= 6) return "mastered";
+  if (cs.box >= 4) return "retained";
+  return "learning";
+}
+function isDue(id){
+  var cs = cardState(id);
+  if (!cs.seen) return false;
+  if (!cs.next) return true;
+  return cs.next <= todayStr();
+}
+
+function renderExample(tpl){
+  return tpl.replace(/\{h\}/g,'<span class="hl">').replace(/\{\/h\}/g,'</span>');
+}
+
+
+/* ================= タブ切り替え ================= */
+var tabs = document.querySelectorAll("nav.tabs button");
+tabs.forEach(function(btn){
+  btn.addEventListener("click", function(){
+    tabs.forEach(function(b){ b.classList.remove("active"); });
+    btn.classList.add("active");
+    document.querySelectorAll("section.view").forEach(function(v){ v.classList.remove("active"); });
+    var target = document.getElementById("view-" + btn.dataset.tab);
+    target.classList.add("active");
+    if (btn.dataset.tab === "wordbank") renderWordBank();
+    if (btn.dataset.tab === "compare") renderCompare();
+    if (btn.dataset.tab === "stats") renderStats();
+  });
+});
+
+/* ================= 設定ポップオーバー ================= */
+var settingsBtn = document.getElementById("settingsBtn");
+var settingsPopover = document.getElementById("settingsPopover");
+var newPerDayInput = document.getElementById("newPerDayInput");
+settingsBtn.addEventListener("click", function(e){
+  e.stopPropagation();
+  settingsPopover.classList.toggle("open");
+});
+document.addEventListener("click", function(e){
+  if (!settingsPopover.contains(e.target) && e.target !== settingsBtn) {
+    settingsPopover.classList.remove("open");
+  }
+});
+newPerDayInput.value = state.settings.newPerDay;
+newPerDayInput.addEventListener("change", function(){
+  var v = parseInt(newPerDayInput.value, 10);
+  if (isNaN(v) || v < 1) v = 15;
+  v = Math.max(5, Math.min(40, v));
+  newPerDayInput.value = v;
+  state.settings.newPerDay = v;
+  saveState();
+});
+document.querySelectorAll("[data-theme-choice]").forEach(function(btn){
+  btn.addEventListener("click", function(){
+    var choice = btn.dataset.themeChoice;
+    state.settings.theme = choice;
+    applyTheme();
+    saveState();
+    updateThemeButtons();
+  });
+});
+function updateThemeButtons(){
+  document.querySelectorAll("[data-theme-choice]").forEach(function(b){
+    b.classList.toggle("active", b.dataset.themeChoice === state.settings.theme);
+  });
+}
+function applyTheme(){
+  var root = document.documentElement;
+  if (state.settings.theme === "light") root.setAttribute("data-theme","light");
+  else if (state.settings.theme === "dark") root.setAttribute("data-theme","dark");
+  else root.removeAttribute("data-theme");
+}
+document.getElementById("resetAllBtn").addEventListener("click", function(){
+  if (confirm("すべての学習データを削除します。よろしいですか？")) {
+    try { localStorage.removeItem(STORE_KEY); } catch(e){}
+    state = JSON.parse(JSON.stringify(defaultState));
+    saveState();
+    location.reload();
+  }
+});
+
+/* ================= 学習セッション ================= */
+var sessionRoot = document.getElementById("sessionRoot");
+var sess = null; // { stage:'review'|'new'|'redo'|'done', queue:[...ids], pos, total, correctCount, missed:Set }
+
+function buildDueQueue(){
+  var ids = allWords().map(function(w){return w.id;}).filter(isDue);
+  return shuffle(ids);
+}
+function buildNewQueue(){
+  rollDailyIfNeeded();
+  var remaining = state.settings.newPerDay - state.today.newIntroduced;
+  if (remaining <= 0) return [];
+  var unseen = allWords().map(function(w){return w.id;}).filter(function(id){ return !cardState(id).seen; });
+  return unseen.slice(0, remaining);
+}
+
+function startSession(){
+  rollDailyIfNeeded();
+  var dueQ = buildDueQueue();
+  var stage, queue;
+  if (dueQ.length) {
+    stage = "review";
+    queue = dueQ;
+  } else {
+    var newQ = shuffle(buildNewQueue());
+    stage = newQ.length ? "new" : "empty";
+    queue = newQ;
+  }
+  sess = {
+    stage: stage,
+    queue: queue,
+    total: queue.length,
+    pos: 0,
+    revealed: false,
+    correctCount: 0,
+    missedIds: [],
+    newBatch: null
+  };
+  renderSession();
+}
+
+function shuffle(arr){
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i+1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+function currentCardId(){
+  if (!sess || sess.pos >= sess.queue.length) return null;
+  return sess.queue[sess.pos];
+}
+
+function grade(result){
+  var id = currentCardId();
+  if (!id) return;
+  var cs = cardState(id);
+  var wasNew = !cs.seen;
+  cs.seen = true;
+  cs.reps += 1;
+
+  if (result === "bad") {
+    cs.lapses += 1;
+    cs.box = 0;
+    cs.next = todayStr();
+    sess.missedIds.push(id);
+    // すぐの再挑戦のため、少し後ろに再挿入する
+    var insertAt = Math.min(sess.queue.length, sess.pos + 3 + Math.floor(Math.random()*3));
+    sess.queue.splice(insertAt, 0, id);
+    sess.total = Math.max(sess.total, sess.queue.length);
+  } else if (result === "hard") {
+    cs.next = addDays(todayStr(), 1);
+    sess.missedIds.push(id);
+  } else { // good
+    cs.box = Math.min(cs.box + 1, INTERVALS.length);
+    cs.next = addDays(todayStr(), INTERVALS[cs.box - 1]);
+    sess.correctCount += 1;
+  }
+  cs.lastGrade = result;
+
+  if (wasNew) {
+    state.today.newIntroduced += 1;
+    logToday("newCount", 1);
+  }
+  logToday("reviewed", 1);
+  if (result === "good") logToday("correct", 1);
+
+  bumpStreakOnActivity();
+  saveState();
+
+  sess.pos += 1;
+  sess.revealed = false;
+  advanceSessionIfNeeded();
+  renderSession();
+}
+
+function advanceSessionIfNeeded(){
+  if (sess.pos < sess.queue.length) return; // まだカードが残っている
+  if (sess.stage === "review") {
+    sess.stage = "review-done"; // レビュー完了、新規に進むか選ばせる
+  } else if (sess.stage === "new") {
+    sess.stage = "done";
+  } else if (sess.stage === "redo") {
+    sess.stage = "done";
+  }
+}
+
+function goToNewPhase(){
+  var q = buildNewQueue();
+  sess.stage = "new";
+  sess.queue = shuffle(q);
+  sess.total = q.length;
+  sess.pos = 0;
+  sess.revealed = false;
+  renderSession();
+}
+function skipNewPhase(){
+  sess.stage = "done";
+  renderSession();
+}
+function startRedo(){
+  var ids = sess.missedIds.slice();
+  if (!ids.length) return;
+  sess.stage = "redo";
+  sess.queue = shuffle(ids);
+  sess.total = sess.queue.length;
+  sess.pos = 0;
+  sess.revealed = false;
+  sess.correctCount = 0;
+  sess.missedIds = [];
+  renderSession();
+}
+
+function esc(s){
+  var d = document.createElement("div");
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function renderSession(){
+  rollDailyIfNeeded();
+  if (!sess) { startSession(); return; }
+
+  if (sess.stage === "empty") {
+    var dueCount = buildDueQueue().length;
+    var newLeft = state.settings.newPerDay - state.today.newIntroduced;
+    sessionRoot.innerHTML =
+      '<div class="session-empty"><div class="big-emoji">☕</div>' +
+      '<h3>今日の分は完了しています</h3>' +
+      '<p>復習も新規もいったん終わりです。無理に増やさず、また明日続けましょう。'+
+      (newLeft > 0 ? '' : '<br>今日の新規語の上限（'+state.settings.newPerDay+'語）に達しました。') +
+      '</p></div>';
+    return;
+  }
+
+  if (sess.stage === "review-done") {
+    var newAvailable = buildNewQueue().length;
+    sessionRoot.innerHTML =
+      '<div class="session-summary"><div class="big-emoji">📖</div>' +
+      '<h3>復習フェーズ終了</h3>' +
+      '<div class="summary-stats"><div><b>'+sess.total+'</b><span>復習した語</span></div>' +
+      '<div><b>'+sess.correctCount+'</b><span>思い出せた</span></div></div>' +
+      (newAvailable > 0
+        ? '<p>続けて新しい単語を学習しますか？（今日はあと '+newAvailable+' 語まで）</p>' +
+          '<button class="btn-primary" id="toNewBtn">新しい単語に進む</button>' +
+          '<button class="btn-secondary" id="skipNewBtn">今日はここまでにする</button>'
+        : '<p>今日の新規語の上限に達しているか、未学習の単語がありません。</p>' +
+          '<button class="btn-secondary" id="skipNewBtn">結果を見る</button>'
+      ) + '</div>';
+    if (newAvailable > 0) document.getElementById("toNewBtn").addEventListener("click", goToNewPhase);
+    document.getElementById("skipNewBtn").addEventListener("click", skipNewPhase);
+    return;
+  }
+
+  if (sess.stage === "done") {
+    var canRedo = sess.missedIds.length > 0;
+    sessionRoot.innerHTML =
+      '<div class="session-summary"><div class="big-emoji">✅</div>' +
+      '<h3>お疲れさまでした</h3>' +
+      '<div class="summary-stats"><div><b>'+sess.total+'</b><span>取り組んだ語</span></div>' +
+      '<div><b>'+sess.correctCount+'</b><span>すぐ思い出せた</span></div>' +
+      '<div><b>'+sess.missedIds.length+'</b><span>要復習</span></div></div>' +
+      (canRedo ? '<button class="btn-primary" id="redoBtn">苦手な単語だけもう一周（'+new Set(sess.missedIds).size+'語）</button>' : '') +
+      '<button class="btn-secondary" id="restartBtn">セッション画面に戻る</button></div>';
+    if (canRedo) document.getElementById("redoBtn").addEventListener("click", startRedo);
+    document.getElementById("restartBtn").addEventListener("click", function(){ sess = null; startSession(); });
+    return;
+  }
+
+  // review / new / redo: フラッシュカード表示
+  var id = currentCardId();
+  if (!id) { advanceSessionIfNeeded(); renderSession(); return; }
+  var w = wordById(id);
+  var stageLabel = sess.stage === "review" ? "復習フェーズ・シャッフル出題中"
+                   : sess.stage === "new" ? "新規学習フェーズ"
+                   : "苦手だけドリル中";
+  var doneCount = sess.pos;
+  var pct = sess.total ? Math.min(100, Math.round((doneCount / sess.total) * 100)) : 0;
+
+  var html = '';
+  html += '<span class="stage-label">'+stageLabel+'</span>';
+  html += '<div class="session-stats"><div><b>'+(sess.total - doneCount)+'</b> 残り</div><div><b>'+doneCount+'</b> 完了</div><div><b>'+sess.correctCount+'</b> 正解</div></div>';
+  html += '<div class="progress-track"><div class="progress-fill" style="width:'+pct+'%"></div></div>';
+  html += '<div class="card-stage"><div class="flashcard'+(sess.revealed?' revealed':'')+'" id="flashcard">';
+  html += '<span class="card-pos">'+esc(w.pos)+'</span>';
+  html += '<div class="card-word">'+esc(w.word)+'</div>';
+  html += '<div class="card-hint">タップ、またはEnter／Spaceキーで意味を表示</div>';
+  html += '<div class="card-answer">';
+  html += '<div class="card-meaning">'+esc(w.meaning)+'</div>';
+  html += '<div class="card-divider"></div>';
+  html += '<div class="card-example">'+renderExample(w.example)+'</div>';
+  if (w.group) html += '<span class="card-note">似た単語グループあり</span>';
+  html += '</div></div></div>';
+
+  if (!sess.revealed) {
+    html += '<button class="reveal-btn" id="revealBtn">答えを見る<span class="key">Enter / Space</span></button>';
+  } else {
+    html += '<div class="grade-row">';
+    html += '<button class="grade-btn bad" id="gBad"><span class="g-label">わからなかった</span><span class="g-key">1</span></button>';
+    html += '<button class="grade-btn hard" id="gHard"><span class="g-label">曖昧</span><span class="g-key">2</span></button>';
+    html += '<button class="grade-btn good" id="gGood"><span class="g-label">完璧</span><span class="g-key">3</span></button>';
+    html += '</div>';
+  }
+
+  sessionRoot.innerHTML = html;
+
+  var fc = document.getElementById("flashcard");
+  fc.addEventListener("click", reveal);
+  if (!sess.revealed) {
+    document.getElementById("revealBtn").addEventListener("click", reveal);
+  } else {
+    document.getElementById("gBad").addEventListener("click", function(){ grade("bad"); });
+    document.getElementById("gHard").addEventListener("click", function(){ grade("hard"); });
+    document.getElementById("gGood").addEventListener("click", function(){ grade("good"); });
+  }
+}
+
+function reveal(){
+  if (!sess || sess.revealed) return;
+  sess.revealed = true;
+  renderSession();
+}
+
+document.addEventListener("keydown", function(e){
+  var sessionTab = document.getElementById("view-session");
+  if (!sessionTab.classList.contains("active")) return;
+  if (!sess) return;
+  if (["review","new","redo"].indexOf(sess.stage) === -1) return;
+  if (!sess.revealed) {
+    if (e.code === "Enter" || e.code === "Space") { e.preventDefault(); reveal(); }
+    return;
+  }
+  if (e.key === "1") grade("bad");
+  else if (e.key === "2") grade("hard");
+  else if (e.key === "3") grade("good");
+});
+
+/* ================= 単語帳タブ ================= */
+var currentFilter = "all";
+var searchQuery = "";
+
+document.getElementById("wbSearch").addEventListener("input", function(e){
+  searchQuery = e.target.value.trim().toLowerCase();
+  renderWordBank();
+});
+document.querySelectorAll("#wbFilters .chip").forEach(function(chip){
+  chip.addEventListener("click", function(){
+    document.querySelectorAll("#wbFilters .chip").forEach(function(c){ c.classList.remove("active"); });
+    chip.classList.add("active");
+    currentFilter = chip.dataset.filter;
+    renderWordBank();
+  });
+});
+
+var addToggleBtn = document.getElementById("addToggleBtn");
+var addForm = document.getElementById("addForm");
+addToggleBtn.addEventListener("click", function(){
+  addForm.classList.toggle("open");
+});
+document.getElementById("fSubmit").addEventListener("click", function(){
+  var word = document.getElementById("fWord").value.trim();
+  var meaning = document.getElementById("fMeaning").value.trim();
+  var example = document.getElementById("fExample").value.trim();
+  var pos = document.getElementById("fPos").value;
+  var group = document.getElementById("fGroup").value.trim() || null;
+  if (!word || !meaning) { alert("英単語と意味は必須です。"); return; }
+  var id = "c_" + Date.now() + "_" + Math.floor(Math.random()*1000);
+  state.custom.push({ id: id, word: word, pos: pos, meaning: meaning, example: example || word, group: group, custom: true });
+  saveState();
+  document.getElementById("fWord").value = "";
+  document.getElementById("fMeaning").value = "";
+  document.getElementById("fExample").value = "";
+  document.getElementById("fGroup").value = "";
+  addForm.classList.remove("open");
+  renderWordBank();
+});
+
+function renderWordBank(){
+  var list = document.getElementById("wordList");
+  var words = allWords().filter(function(w){
+    var st = statusOf(w.id);
+    if (currentFilter !== "all") {
+      if (currentFilter === "learning" && (st === "new" || st === "mastered")) return false;
+      if (currentFilter !== "learning" && st !== currentFilter) return false;
+    }
+    if (searchQuery) {
+      var hay = (w.word + " " + w.meaning).toLowerCase();
+      if (hay.indexOf(searchQuery) === -1) return false;
+    }
+    return true;
+  });
+
+  if (!words.length) {
+    list.innerHTML = '<div class="empty-note">該当する単語がありません。</div>';
+    return;
+  }
+
+  var statusLabel = {new:"新規", learning:"学習中", retained:"定着中", mastered:"習得済み", leech:"苦手"};
+
+  list.innerHTML = words.map(function(w){
+    var st = statusOf(w.id);
+    var delBtn = w.custom ? '<button class="del" data-del="'+w.id+'">削除</button>' : '';
+    return (
+      '<div class="word-row" data-id="'+w.id+'">' +
+        '<div class="word-row-top">' +
+          '<div><div class="word-row-word">'+esc(w.word)+' <span style="font-size:11px;color:var(--text-dim);font-weight:400;">'+esc(w.pos)+'</span></div>' +
+          '<div class="word-row-meaning">'+esc(w.meaning)+'</div></div>' +
+          '<div style="display:flex;align-items:center;gap:6px;"><span style="font-size:11px;color:var(--text-dim);">'+statusLabel[st]+'</span><span class="status-dot '+st+'"></span></div>' +
+        '</div>' +
+        '<div class="word-row-detail">' + renderExample(w.example) +
+          '<div class="row-actions"><button data-reset="'+w.id+'">進捗をリセット</button>'+delBtn+'</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }).join("");
+
+  list.querySelectorAll(".word-row").forEach(function(row){
+    row.addEventListener("click", function(e){
+      if (e.target.closest("button")) return;
+      row.classList.toggle("open");
+    });
+  });
+  list.querySelectorAll("[data-reset]").forEach(function(btn){
+    btn.addEventListener("click", function(e){
+      e.stopPropagation();
+      var id = btn.dataset.reset;
+      state.cards[id] = { box:0, next:null, seen:false, reps:0, lapses:0, lastGrade:null };
+      saveState();
+      renderWordBank();
+    });
+  });
+  list.querySelectorAll("[data-del]").forEach(function(btn){
+    btn.addEventListener("click", function(e){
+      e.stopPropagation();
+      var id = btn.dataset.del;
+      if (!confirm("この単語を単語帳から削除しますか？")) return;
+      state.custom = state.custom.filter(function(w){ return w.id !== id; });
+      delete state.cards[id];
+      saveState();
+      renderWordBank();
+    });
+  });
+}
+
+/* ================= 比較タブ ================= */
+function groupsInUse(){
+  var map = {};
+  allWords().forEach(function(w){
+    if (w.group) {
+      if (!map[w.group]) map[w.group] = [];
+      map[w.group].push(w);
+    }
+  });
+  return map;
+}
+function renderCompare(){
+  var sel = document.getElementById("groupSelect");
+  var groups = groupsInUse();
+  var keys = Object.keys(groups);
+  if (!keys.length) {
+    sel.innerHTML = '<option>グループがありません</option>';
+    document.getElementById("compareGrid").innerHTML = '<div class="empty-note">単語追加時にグループ名を入れると、ここで比較できます。</div>';
+    return;
+  }
+  var prevValue = sel.value;
+  sel.innerHTML = keys.map(function(k){
+    var label = GROUP_LABELS[k] || k;
+    return '<option value="'+esc(k)+'">'+esc(label)+'（'+groups[k].length+'語）</option>';
+  }).join("");
+  if (keys.indexOf(prevValue) !== -1) sel.value = prevValue;
+  sel.onchange = function(){ paintCompareGrid(groups[sel.value] || []); };
+  paintCompareGrid(groups[sel.value] || groups[keys[0]]);
+}
+function paintCompareGrid(words){
+  var grid = document.getElementById("compareGrid");
+  grid.innerHTML = words.map(function(w){
+    return (
+      '<div class="compare-card">' +
+        '<div><span class="cw">'+esc(w.word)+'</span><span class="cp">'+esc(w.pos)+'</span></div>' +
+        '<div class="cm">'+esc(w.meaning)+'</div>' +
+        '<div class="ce">'+renderExample(w.example)+'</div>' +
+      '</div>'
+    );
+  }).join("");
+}
+
+/* ================= 統計タブ ================= */
+function renderStats(){
+  var words = allWords();
+  var counts = {new:0, learning:0, retained:0, mastered:0, leech:0};
+  words.forEach(function(w){ counts[statusOf(w.id)]++; });
+  var dueToday = words.filter(function(w){ return isDue(w.id); }).length;
+
+  var grid = document.getElementById("statGrid");
+  grid.innerHTML = [
+    ["総単語数", words.length],
+    ["今日の復習", dueToday],
+    ["学習中", counts.learning],
+    ["定着中", counts.retained],
+    ["習得済み", counts.mastered],
+    ["苦手（要注意）", counts.leech]
+  ].map(function(pair){
+    return '<div class="stat-card"><b>'+pair[1]+'</b><span>'+pair[0]+'</span></div>';
+  }).join("");
+
+  var barList = document.getElementById("barList");
+  var days = [];
+  for (var i = 6; i >= 0; i--) days.push(addDays(todayStr(), -i));
+  var maxVal = 1;
+  days.forEach(function(d){ if (state.log[d]) maxVal = Math.max(maxVal, state.log[d].reviewed); });
+  barList.innerHTML = days.map(function(d){
+    var val = state.log[d] ? state.log[d].reviewed : 0;
+    var pct = Math.round((val / maxVal) * 100);
+    var label = d.slice(5).replace("-","/");
+    return (
+      '<div class="bar-row"><div class="lbl">'+label+'</div>' +
+      '<div class="track"><div class="fill" style="width:'+pct+'%"></div></div>' +
+      '<div class="val">'+val+'</div></div>'
+    );
+  }).join("");
+}
+
+/* ================= 初期化 ================= */
+applyTheme();
+updateThemeButtons();
+document.getElementById("streakCount").textContent = state.streak.count;
+rollDailyIfNeeded();
+startSession();
+
+})();
+</script>
+</body>
+</html>
