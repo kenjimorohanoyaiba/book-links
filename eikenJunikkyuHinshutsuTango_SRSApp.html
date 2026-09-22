@@ -1,0 +1,1535 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>単語帳めぐり</title>
+<meta name="description" content="英検準1級の頻出単語150語を、人間の忘却曲線に沿った間隔反復（SM-2アルゴリズム）で効率よく暗記するSRS学習アプリ。">
+<meta name="color-scheme" content="light dark">
+<style>
+  :root{ padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); }
+  [hidden]{display:none!important;}
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root{
+    --paper:#FBF7F0;
+    --paper-raised:#FFFFFF;
+    --ink:#211D1A;
+    --ink-soft:#6B6459;
+    --ink-faint:#A79E90;
+    --line:#E7DFD1;
+    --indigo:#3B4C7A;
+    --indigo-deep:#2B3A67;
+    --indigo-tint:#EEF1F8;
+    --amber:#CF9A3A;
+    --amber-tint:#FBF0DC;
+    --sage:#5F8A6E;
+    --sage-tint:#E9F2EA;
+    --rose:#BC5A45;
+    --rose-tint:#FBEAE4;
+    --sky:#4E7FA8;
+    --sky-tint:#EAF2F8;
+    --shadow: 0 1px 2px rgba(43,32,10,.06), 0 8px 24px -12px rgba(43,32,10,.18);
+    --radius: 18px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#14151C;
+      --paper-raised:#1C1E28;
+      --ink:#EDE9E1;
+      --ink-soft:#A8A39A;
+      --ink-faint:#6B6862;
+      --line:#2C2E3A;
+      --indigo:#8CA0D7;
+      --indigo-deep:#AEC0EF;
+      --indigo-tint:#20263B;
+      --amber:#E3B564;
+      --amber-tint:#332A16;
+      --sage:#8FC2A0;
+      --sage-tint:#1B2C20;
+      --rose:#E28A73;
+      --rose-tint:#33201B;
+      --sky:#8FBBE0;
+      --sky-tint:#1B2733;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px -12px rgba(0,0,0,.55);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#14151C;
+    --paper-raised:#1C1E28;
+    --ink:#EDE9E1;
+    --ink-soft:#A8A39A;
+    --ink-faint:#6B6862;
+    --line:#2C2E3A;
+    --indigo:#8CA0D7;
+    --indigo-deep:#AEC0EF;
+    --indigo-tint:#20263B;
+    --amber:#E3B564;
+    --amber-tint:#332A16;
+    --sage:#8FC2A0;
+    --sage-tint:#1B2C20;
+    --rose:#E28A73;
+    --rose-tint:#33201B;
+    --sky:#8FBBE0;
+    --sky-tint:#1B2733;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px -12px rgba(0,0,0,.55);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Zen Kaku Gothic New', 'Hiragino Sans', sans-serif;
+    margin:0;
+    min-height:100%;
+    -webkit-font-smoothing:antialiased;
+  }
+  html,body{height:100%;}
+  #app{
+    max-width:640px;
+    margin:0 auto;
+    min-height:100%;
+    display:flex;
+    flex-direction:column;
+    padding:0 16px;
+  }
+  a{color:inherit;}
+  button{font-family:inherit;}
+
+  /* ---- header ---- */
+  .topbar{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    padding-block:18px 10px;
+    gap:12px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:9px;
+  }
+  .brand-mark{
+    width:30px;height:30px;border-radius:9px;
+    background:linear-gradient(155deg,var(--indigo) 0%, var(--indigo-deep) 100%);
+    display:flex;align-items:center;justify-content:center;
+    color:#F5EEDD;font-family:'Fraunces',serif;font-weight:600;font-size:15px;
+    flex:none;
+  }
+  .brand-name{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:19px;
+    letter-spacing:.01em;
+  }
+  .streak-pill{
+    display:flex;align-items:center;gap:6px;
+    background:var(--amber-tint);
+    color:var(--amber);
+    border-radius:999px;
+    padding:6px 12px 6px 10px;
+    font-family:'JetBrains Mono',monospace;
+    font-weight:700;
+    font-size:13px;
+    font-variant-numeric:tabular-nums;
+    flex:none;
+  }
+  .streak-pill svg{width:14px;height:14px;flex:none;}
+
+  main{flex:1;padding-bottom:96px;}
+  .view{ }
+  .view[hidden]{display:none;}
+
+  /* ---- generic section heading ---- */
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    margin:0 0 6px;
+  }
+  h1.page-title{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:25px;
+    margin:0 0 18px;
+    letter-spacing:-.01em;
+  }
+
+  /* ===================== STUDY VIEW ===================== */
+  .study-stat-row{
+    display:flex; gap:10px; margin-bottom:18px;
+  }
+  .study-stat{
+    flex:1;
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:10px 12px;
+    text-align:center;
+  }
+  .study-stat b{
+    display:block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:19px;
+    font-variant-numeric:tabular-nums;
+    color:var(--indigo);
+  }
+  .study-stat span{
+    font-size:11px;
+    color:var(--ink-soft);
+  }
+
+  .progress-track{
+    height:6px;
+    background:var(--line);
+    border-radius:999px;
+    overflow:hidden;
+    margin-bottom:22px;
+  }
+  .progress-fill{
+    height:100%;
+    background:linear-gradient(90deg, var(--indigo) 0%, var(--sky) 100%);
+    border-radius:999px;
+    transition:width .35s ease;
+    width:0%;
+  }
+
+  .stage{
+    perspective:1400px;
+    margin-bottom:20px;
+  }
+  .flashcard{
+    position:relative;
+    width:100%;
+    min-height:340px;
+    transform-style:preserve-3d;
+    transition:transform .5s cubic-bezier(.2,.7,.3,1);
+    cursor:pointer;
+  }
+  .flashcard.flipped{transform:rotateY(180deg);}
+  .face{
+    position:absolute; inset:0;
+    backface-visibility:hidden;
+    border-radius:22px;
+    border:1px solid var(--line);
+    background:var(--paper-raised);
+    box-shadow:var(--shadow);
+    padding:30px 26px;
+    display:flex; flex-direction:column;
+  }
+  .face-front{
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    gap:16px;
+  }
+  .face-back{
+    transform:rotateY(180deg);
+    justify-content:flex-start;
+    overflow-y:auto;
+  }
+  .card-tag-row{
+    display:flex; gap:8px; align-items:center; justify-content:center;
+    position:absolute; top:22px; left:26px; right:26px;
+  }
+  .pos-badge{
+    font-size:11px;
+    font-weight:700;
+    padding:4px 10px;
+    border-radius:999px;
+    letter-spacing:.02em;
+  }
+  .pos-badge.noun{background:var(--sky-tint); color:var(--sky);}
+  .pos-badge.verb{background:var(--sage-tint); color:var(--sage);}
+  .pos-badge.adj{background:var(--rose-tint); color:var(--rose);}
+  .card-no{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--ink-faint);
+    margin-left:auto;
+  }
+  .card-state-dot{
+    width:7px;height:7px;border-radius:50%;
+    flex:none;
+  }
+  .word-display{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:clamp(30px,8vw,42px);
+    letter-spacing:-.01em;
+    line-height:1.15;
+    text-wrap:balance;
+  }
+  .tap-hint{
+    font-size:12px;
+    color:var(--ink-faint);
+    display:flex; align-items:center; gap:6px;
+    margin-top:6px;
+  }
+  .tap-hint svg{width:14px;height:14px;opacity:.7;}
+
+  .back-word{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:24px;
+    margin-bottom:2px;
+  }
+  .back-meaning{
+    font-size:20px;
+    font-weight:700;
+    color:var(--indigo-deep);
+    margin:10px 0 16px;
+    line-height:1.5;
+  }
+  .back-example{
+    font-size:14px;
+    line-height:1.75;
+    color:var(--ink-soft);
+    background:var(--indigo-tint);
+    border-radius:14px;
+    padding:14px 16px;
+    margin-top:auto;
+  }
+  .back-example mark{
+    background:none;
+    color:var(--indigo);
+    font-weight:700;
+    text-decoration:underline;
+    text-decoration-color:var(--amber);
+    text-decoration-thickness:2px;
+    text-underline-offset:3px;
+  }
+
+  .show-answer-btn{
+    appearance:none; border:none;
+    background:var(--indigo);
+    color:#F7F2E4;
+    font-weight:700;
+    font-size:15px;
+    padding:13px 26px;
+    border-radius:999px;
+    cursor:pointer;
+    display:flex; align-items:center; gap:8px;
+    box-shadow:0 6px 18px -8px rgba(43,58,103,.55);
+  }
+  .show-answer-btn:active{transform:scale(.97);}
+
+  .rate-row{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+  }
+  .rate-btn{
+    appearance:none;
+    border:1px solid var(--line);
+    background:var(--paper-raised);
+    border-radius:14px;
+    padding:10px 4px 11px;
+    cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    transition:transform .1s ease;
+  }
+  .rate-btn:active{transform:scale(.95);}
+  .rate-btn .k{
+    font-size:13px; font-weight:700;
+  }
+  .rate-btn .iv{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--ink-faint);
+    font-variant-numeric:tabular-nums;
+  }
+  .rate-btn.again{border-color:color-mix(in srgb, var(--rose) 35%, var(--line));}
+  .rate-btn.again .k{color:var(--rose);}
+  .rate-btn.hard{border-color:color-mix(in srgb, var(--amber) 35%, var(--line));}
+  .rate-btn.hard .k{color:var(--amber);}
+  .rate-btn.good{border-color:color-mix(in srgb, var(--sky) 35%, var(--line));}
+  .rate-btn.good .k{color:var(--sky);}
+  .rate-btn.easy{border-color:color-mix(in srgb, var(--sage) 35%, var(--line));}
+  .rate-btn.easy .k{color:var(--sage);}
+
+  .hint-row{
+    text-align:center;
+    font-size:11px;
+    color:var(--ink-faint);
+    margin-top:12px;
+  }
+  kbd{
+    font-family:'JetBrains Mono',monospace;
+    background:var(--line);
+    border-radius:4px;
+    padding:1px 5px;
+    font-size:10px;
+  }
+
+  /* empty / done state */
+  .empty-state{
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:22px;
+    padding:44px 26px;
+    text-align:center;
+    box-shadow:var(--shadow);
+  }
+  .empty-state .glyph{
+    font-family:'Fraunces',serif;
+    font-size:40px;
+    margin-bottom:6px;
+  }
+  .empty-state h2{
+    font-family:'Fraunces',serif;
+    font-size:20px;
+    margin:6px 0 8px;
+  }
+  .empty-state p{
+    color:var(--ink-soft);
+    font-size:14px;
+    line-height:1.7;
+    margin:0 0 18px;
+  }
+  .primary-btn{
+    appearance:none;border:none;
+    background:var(--indigo);
+    color:#F7F2E4;
+    font-weight:700;
+    font-size:14px;
+    padding:11px 22px;
+    border-radius:999px;
+    cursor:pointer;
+  }
+  .ghost-btn{
+    appearance:none;
+    border:1px solid var(--line);
+    background:transparent;
+    color:var(--ink);
+    font-weight:600;
+    font-size:13px;
+    padding:9px 18px;
+    border-radius:999px;
+    cursor:pointer;
+    margin-top:10px;
+  }
+
+  /* ===================== STATS VIEW ===================== */
+  .stat-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+    margin-bottom:22px;
+  }
+  .stat-card{
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:16px;
+  }
+  .stat-card b{
+    display:block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:26px;
+    font-variant-numeric:tabular-nums;
+  }
+  .stat-card span{
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+  .stat-card.acc b{color:var(--sage);}
+  .stat-card.due b{color:var(--rose);}
+  .stat-card.mastered b{color:var(--indigo);}
+  .stat-card.streak b{color:var(--amber);}
+
+  .panel{
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:18px;
+    margin-bottom:16px;
+  }
+  .panel h3{
+    font-family:'Fraunces',serif;
+    font-size:16px;
+    font-weight:600;
+    margin:0 0 14px;
+  }
+
+  .forecast-row{
+    display:flex;
+    align-items:flex-end;
+    gap:8px;
+    height:110px;
+  }
+  .forecast-col{
+    flex:1;
+    display:flex; flex-direction:column; align-items:center;
+    height:100%;
+    justify-content:flex-end;
+    gap:6px;
+  }
+  .forecast-bar{
+    width:100%;
+    max-width:30px;
+    background:var(--indigo-tint);
+    border-radius:6px 6px 3px 3px;
+    position:relative;
+    min-height:3px;
+  }
+  .forecast-bar b{
+    display:block;
+    background:var(--indigo);
+    width:100%;
+    border-radius:6px 6px 3px 3px;
+    position:absolute;
+    bottom:0;
+  }
+  .forecast-col .n{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    font-variant-numeric:tabular-nums;
+  }
+  .forecast-col .d{
+    font-size:10px;
+    color:var(--ink-faint);
+  }
+
+  .mastery-wrap{
+    display:flex; align-items:center; gap:22px;
+  }
+  .donut{
+    width:104px;height:104px;border-radius:50%;
+    flex:none;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .donut .hole{
+    width:62px;height:62px;border-radius:50%;
+    background:var(--paper-raised);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+  }
+  .donut .hole b{font-family:'JetBrains Mono',monospace;font-size:18px;font-variant-numeric:tabular-nums;}
+  .donut .hole span{font-size:9px;color:var(--ink-faint);}
+  .legend{flex:1; display:flex; flex-direction:column; gap:9px;}
+  .legend-row{
+    display:flex; align-items:center; gap:8px;
+    font-size:12.5px;
+  }
+  .legend-dot{width:9px;height:9px;border-radius:3px;flex:none;}
+  .legend-row b{
+    margin-left:auto;
+    font-family:'JetBrains Mono',monospace;
+    font-variant-numeric:tabular-nums;
+    font-weight:700;
+  }
+
+  .heatmap{
+    display:grid;
+    grid-template-columns:repeat(14,1fr);
+    gap:4px;
+  }
+  .heat-cell{
+    aspect-ratio:1;
+    border-radius:3px;
+    background:var(--line);
+  }
+  .heatmap-foot{
+    display:flex; justify-content:space-between;
+    font-size:10px; color:var(--ink-faint);
+    margin-top:8px;
+  }
+
+  /* ===================== LIST VIEW ===================== */
+  .list-controls{
+    display:flex; flex-direction:column; gap:10px;
+    margin-bottom:14px;
+  }
+  .search-box{
+    display:flex; align-items:center; gap:8px;
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:10px 12px;
+  }
+  .search-box svg{width:16px;height:16px;color:var(--ink-faint);flex:none;}
+  .search-box input{
+    border:none; outline:none; background:none;
+    font-size:14px; width:100%; color:var(--ink);
+    font-family:inherit;
+  }
+  .chip-row{display:flex; gap:6px; flex-wrap:wrap;}
+  .chip{
+    appearance:none;
+    border:1px solid var(--line);
+    background:var(--paper-raised);
+    color:var(--ink-soft);
+    font-size:12px;
+    font-weight:600;
+    padding:6px 12px;
+    border-radius:999px;
+    cursor:pointer;
+  }
+  .chip.active{
+    background:var(--indigo);
+    border-color:var(--indigo);
+    color:#F7F2E4;
+  }
+  .word-row{
+    display:flex; align-items:center; gap:12px;
+    padding:12px 4px;
+    border-bottom:1px solid var(--line);
+  }
+  .word-row .wr-no{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    color:var(--ink-faint);
+    width:24px;
+    flex:none;
+    font-variant-numeric:tabular-nums;
+  }
+  .word-row .wr-main{flex:1; min-width:0;}
+  .word-row .wr-word{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:16px;
+  }
+  .word-row .wr-meaning{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .wr-state{
+    font-size:10px;
+    font-weight:700;
+    padding:4px 9px;
+    border-radius:999px;
+    flex:none;
+    white-space:nowrap;
+  }
+  .wr-state.new{background:var(--sky-tint); color:var(--sky);}
+  .wr-state.learning{background:var(--amber-tint); color:var(--amber);}
+  .wr-state.review{background:var(--indigo-tint); color:var(--indigo);}
+  .wr-state.mastered{background:var(--sage-tint); color:var(--sage);}
+  .list-empty{
+    text-align:center; padding:30px 10px; color:var(--ink-faint); font-size:13px;
+  }
+
+  /* ===================== END OF SESSION ===================== */
+  .session-summary{
+    background:linear-gradient(165deg, var(--indigo-deep) 0%, var(--indigo) 100%);
+    border-radius:22px;
+    padding:34px 26px;
+    text-align:center;
+    color:#F7F2E4;
+    box-shadow:var(--shadow);
+  }
+  .session-summary .glyph{font-size:36px;}
+  .session-summary h2{
+    font-family:'Fraunces',serif;
+    font-size:21px;
+    margin:8px 0 4px;
+  }
+  .session-summary p{
+    font-size:13px;
+    opacity:.85;
+    margin:0 0 20px;
+  }
+  .session-figs{
+    display:flex; justify-content:center; gap:26px;
+    margin-bottom:22px;
+  }
+  .session-figs div{text-align:center;}
+  .session-figs b{
+    display:block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:22px;
+    font-variant-numeric:tabular-nums;
+  }
+  .session-figs span{font-size:11px; opacity:.75;}
+  .session-summary .primary-btn{
+    background:#F7F2E4;
+    color:var(--indigo-deep);
+  }
+  .session-summary .ghost-btn{
+    border-color:rgba(247,242,228,.35);
+    color:#F7F2E4;
+  }
+
+  /* ---- bottom nav ---- */
+  .bottomnav{
+    position:fixed;
+    left:0; right:0; bottom:0;
+    display:flex;
+    justify-content:center;
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));
+    background:linear-gradient(to top, var(--paper) 60%, transparent);
+    pointer-events:none;
+  }
+  .bottomnav-inner{
+    pointer-events:auto;
+    display:flex;
+    gap:4px;
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:5px;
+    box-shadow:var(--shadow);
+    max-width:100%;
+  }
+  .navbtn{
+    appearance:none; border:none; background:none;
+    display:flex; flex-direction:column; align-items:center; gap:2px;
+    padding:8px 20px;
+    border-radius:999px;
+    color:var(--ink-faint);
+    cursor:pointer;
+    font-size:10.5px;
+    font-weight:700;
+    position:relative;
+  }
+  .navbtn svg{width:19px;height:19px;}
+  .navbtn.active{
+    background:var(--indigo-tint);
+    color:var(--indigo);
+  }
+  .navbtn .badge{
+    position:absolute; top:3px; right:12px;
+    background:var(--rose);
+    color:#fff;
+    font-size:9px;
+    font-weight:700;
+    border-radius:999px;
+    min-width:15px;
+    height:15px;
+    display:flex;align-items:center;justify-content:center;
+    padding:0 3px;
+    font-family:'JetBrains Mono',monospace;
+  }
+
+  @media (max-width:420px){
+    .word-display{font-size:8vw;}
+    .session-figs{gap:16px;}
+  }
+
+  ::selection{background:var(--amber-tint); color:var(--amber);}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">単</div>
+      <div class="brand-name">単語帳めぐり</div>
+    </div>
+    <div class="streak-pill" id="streakPill">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3-1 4.5-2 6-1.2 1.7-2 3.2-2 5a4 4 0 0 0 8 0c0-1-.3-1.8-.8-2.6.9.5 1.8 1.7 1.8 3.6a5 5 0 0 1-10 0c0-4 2-6 3-7.5C10.8 4.8 11 3.3 12 2Z"/></svg>
+      <span id="streakVal">0</span>
+    </div>
+  </div>
+
+  <main>
+    <!-- ============ STUDY VIEW ============ -->
+    <section class="view" id="view-study">
+      <div id="studySessionArea"></div>
+    </section>
+
+    <!-- ============ STATS VIEW ============ -->
+    <section class="view" id="view-stats" hidden>
+      <p class="eyebrow">Progress</p>
+      <h1 class="page-title">統計</h1>
+
+      <div class="stat-grid">
+        <div class="stat-card due"><b id="statDue">0</b><span>今日の復習</span></div>
+        <div class="stat-card mastered"><b id="statMastered">0</b><span>習得済み</span></div>
+        <div class="stat-card acc"><b id="statAcc">–</b><span>正答率（直近30日）</span></div>
+        <div class="stat-card streak"><b id="statStreak">0</b><span>連続学習日数</span></div>
+      </div>
+
+      <div class="panel">
+        <h3>今後7日間の復習予定</h3>
+        <div class="forecast-row" id="forecastRow"></div>
+      </div>
+
+      <div class="panel">
+        <h3>習熟度の内訳</h3>
+        <div class="mastery-wrap">
+          <div class="donut" id="masteryDonut"><div class="hole"><b id="masteryTotal">150</b><span>語</span></div></div>
+          <div class="legend" id="masteryLegend"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>学習の記録<span style="font-weight:400;color:var(--ink-faint);font-size:11px;"> · 直近28日</span></h3>
+        <div class="heatmap" id="heatmap"></div>
+        <div class="heatmap-foot"><span id="heatmapStart"></span><span>今日</span></div>
+      </div>
+    </section>
+
+    <!-- ============ LIST VIEW ============ -->
+    <section class="view" id="view-list" hidden>
+      <p class="eyebrow">All words</p>
+      <h1 class="page-title">単語一覧<span style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--ink-faint);font-weight:400;"> · 150語</span></h1>
+
+      <div class="list-controls">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input type="text" id="searchInput" placeholder="単語・意味で検索">
+        </div>
+        <div class="chip-row" id="posChips"></div>
+        <div class="chip-row" id="stateChips"></div>
+      </div>
+
+      <div id="wordListArea"></div>
+    </section>
+  </main>
+
+  <div class="bottomnav">
+    <div class="bottomnav-inner">
+      <button class="navbtn active" data-view="study" id="navStudy">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18M9 4v14"/></svg>
+        学習
+        <span class="badge" id="dueBadge" hidden>0</span>
+      </button>
+      <button class="navbtn" data-view="stats" id="navStats">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
+        統計
+      </button>
+      <button class="navbtn" data-view="list" id="navList">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+        単語帳
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------------------------------------------------------------
+   1. DATA  —  [No, word, pos(JP), meaning(JP), example(EN)]
+------------------------------------------------------------------*/
+var WORDS = [[1,'spectacle','名詞','壮観、見世物','The fireworks display was a spectacle that drew thousands of visitors.'],
+[2,'essence','名詞','本質','Honesty is the essence of a good relationship.'],
+[3,'capacity','名詞','能力、容量','The stadium has a seating capacity of fifty thousand.'],
+[4,'loyalty','名詞','忠誠心','The employee\'s loyalty to the company never wavered.'],
+[5,'temper','名詞','気性、癇癪','He lost his temper when the meeting was delayed again.'],
+[6,'grace','名詞','優雅さ','She accepted the criticism with grace and calm.'],
+[7,'horizon','名詞','地平線、視野','Traveling abroad broadened his horizons.'],
+[8,'archaeological','形容詞','考古学の','The archaeological site revealed pottery from the Bronze Age.'],
+[9,'applause','名詞','拍手','The speech was met with loud applause.'],
+[10,'fame','名詞','名声','The novel brought the young author instant fame.'],
+[11,'atlas','名詞','地図帳','She used an old atlas to locate the small island.'],
+[12,'meadow','名詞','牧草地','Sheep were grazing peacefully in the meadow.'],
+[13,'facilitate','動詞','促進する','The new software will facilitate communication between departments.'],
+[14,'endorse','動詞','是認する、支持する','The committee decided to endorse the proposal.'],
+[15,'enforce','動詞','(法律などを)施行する','The city plans to enforce stricter parking regulations.'],
+[16,'implement','動詞','実施する','The company will implement the new policy next month.'],
+[17,'comply','動詞','従う、遵守する','All factories must comply with the safety standards.'],
+[18,'illustrate','動詞','説明する、例証する','The graph illustrates the sharp rise in sales.'],
+[19,'convince','動詞','説得する','It took hours to convince him to change his plan.'],
+[20,'criticize','動詞','批判する','Critics criticized the film for its slow pacing.'],
+[21,'assess','動詞','評価する','Teachers assess students\' progress every semester.'],
+[22,'estimate','動詞','見積もる','Engineers estimated the cost of the bridge at ten million dollars.'],
+[23,'discerning','形容詞','目が肥えた、洞察力のある','A discerning customer can tell the difference in quality.'],
+[24,'fanatical','形容詞','熱狂的な','He is fanatical about collecting vintage cars.'],
+[25,'seclusive','形容詞','隠遁的な','The writer led a seclusive life in the mountains.'],
+[26,'prestigious','形容詞','名声のある','She was admitted to a prestigious university.'],
+[27,'impractical','形容詞','非実用的な','The plan looked impressive but was impractical in reality.'],
+[28,'conclusive','形容詞','決定的な','The scientists found conclusive evidence of the new species.'],
+[29,'spontaneous','形容詞','自発的な','Their laughter was completely spontaneous.'],
+[30,'vague','形容詞','あいまいな','His explanation was too vague to be helpful.'],
+[31,'shallow','形容詞','浅はかな、浅い','The pond was too shallow for swimming.'],
+[32,'sturdy','形容詞','頑丈な','They built a sturdy fence to keep the deer out.'],
+[33,'dilemma','名詞','板挟み、ジレンマ','She faced a dilemma over whether to accept the job offer.'],
+[34,'controversy','名詞','論争','The new law sparked considerable controversy.'],
+[35,'epidemic','名詞','流行病','The government took steps to contain the epidemic.'],
+[36,'hazard','名詞','危険','Smoking is a serious health hazard.'],
+[37,'famine','名詞','飢饉','The drought led to a severe famine in the region.'],
+[38,'drought','名詞','干ばつ','Farmers struggled to grow crops during the drought.'],
+[39,'surplus','名詞','余剰','The country reported a trade surplus this year.'],
+[40,'deficit','名詞','不足、赤字','The government is trying to reduce the budget deficit.'],
+[41,'discrepancy','名詞','食い違い','Auditors found a discrepancy in the company\'s accounts.'],
+[42,'prejudice','名詞','偏見','The training program aims to reduce prejudice in the workplace.'],
+[43,'poverty','名詞','貧困','Many charities work to eliminate poverty.'],
+[44,'conservation','名詞','保護、保全','The park was established for wildlife conservation.'],
+[45,'legislation','名詞','法律制定','New legislation was passed to protect consumer rights.'],
+[46,'momentum','名詞','勢い','The campaign gained momentum after the debate.'],
+[47,'turmoil','名詞','混乱','The country was thrown into political turmoil.'],
+[48,'outbreak','名詞','発生、勃発','Health officials responded quickly to the outbreak.'],
+[49,'resilience','名詞','回復力、強靭さ','The community showed great resilience after the flood.'],
+[50,'repercussion','名詞','影響、余波','The decision had serious repercussions for the industry.'],
+[51,'scrutiny','名詞','精査','The company\'s finances came under close scrutiny.'],
+[52,'stigma','名詞','汚名、偏見','There is still a stigma attached to mental illness.'],
+[53,'eradicate','動詞','根絶する','Vaccination programs helped eradicate the disease.'],
+[54,'alleviate','動詞','緩和する','The medicine helped alleviate her pain.'],
+[55,'exacerbate','動詞','悪化させる','Poor diet can exacerbate the symptoms of the illness.'],
+[56,'jeopardize','動詞','危険にさらす','One mistake could jeopardize the entire project.'],
+[57,'undermine','動詞','徐々に弱体化させる','Constant criticism can undermine an employee\'s confidence.'],
+[58,'curb','動詞','抑制する','The new tax is designed to curb pollution.'],
+[59,'deteriorate','動詞','悪化する','Her health began to deteriorate rapidly.'],
+[60,'mitigate','動詞','軽減する','Engineers designed the dam to mitigate flood damage.'],
+[61,'exploit','動詞','搾取する、利用する','The company was accused of exploiting its workers.'],
+[62,'deprive','動詞','奪う','The prisoners were deprived of sleep for days.'],
+[63,'distort','動詞','歪める','The media sometimes distorts the facts of a story.'],
+[64,'provoke','動詞','挑発する、引き起こす','His comment provoked an angry response.'],
+[65,'overwhelm','動詞','圧倒する','She was overwhelmed by the amount of homework.'],
+[66,'tackle','動詞','(問題に)取り組む','The city plans to tackle the housing shortage.'],
+[67,'comprehend','動詞','理解する','Young children may not fully comprehend the risks.'],
+[68,'retrieve','動詞','取り戻す','The dog was trained to retrieve the ball.'],
+[69,'ban','動詞','禁止する','The council voted to ban smoking in public parks.'],
+[70,'discard','動詞','捨てる','Please discard any expired medication safely.'],
+[71,'justify','動詞','正当化する','He could not justify the extra expense.'],
+[72,'trigger','動詞','引き起こす','The announcement triggered a wave of protests.'],
+[73,'notorious','形容詞','悪名高い','The area is notorious for its heavy traffic.'],
+[74,'rampant','形容詞','はびこっている','Corruption was rampant throughout the government.'],
+[75,'meticulous','形容詞','几帳面な','She kept meticulous records of every transaction.'],
+[76,'ambiguous','形容詞','あいまいな','The instructions were ambiguous and confused everyone.'],
+[77,'plausible','形容詞','もっともらしい','He offered a plausible explanation for the delay.'],
+[78,'tedious','形容詞','退屈な','Filling out the forms was a tedious task.'],
+[79,'versatile','形容詞','多才な、万能の','The actor is known for being remarkably versatile.'],
+[80,'substantial','形容詞','かなりの、実質的な','They made a substantial profit this quarter.'],
+[81,'skeptical','形容詞','懐疑的な','Many scientists remained skeptical of the claim.'],
+[82,'detrimental','形容詞','有害な','Too much stress can be detrimental to your health.'],
+[83,'vulnerable','形容詞','脆弱な','Elderly people are more vulnerable to the disease.'],
+[84,'controversial','形容詞','論争を呼ぶ','The policy remains highly controversial.'],
+[85,'inevitable','形容詞','避けられない','Some delay was inevitable given the weather.'],
+[86,'profound','形容詞','深遠な','The book had a profound effect on her thinking.'],
+[87,'tremendous','形容詞','途方もない','The project required a tremendous amount of effort.'],
+[88,'chronic','形容詞','慢性の','He suffers from a chronic back condition.'],
+[89,'feasible','形容詞','実現可能な','The engineers confirmed the design was feasible.'],
+[90,'eligible','形容詞','資格のある','Only full-time staff are eligible for the bonus.'],
+[91,'rigorous','形容詞','厳格な','Applicants must pass a rigorous screening process.'],
+[92,'candid','形容詞','率直な','She gave a candid account of what had happened.'],
+[93,'paradox','名詞','逆説、矛盾','It is a paradox that the more we have, the more we want.'],
+[94,'anomaly','名詞','異常、変則','The scientists noticed an anomaly in the data.'],
+[95,'consensus','名詞','総意、合意','The board reached a consensus after hours of debate.'],
+[96,'entity','名詞','実体、団体','The new department will operate as a separate entity.'],
+[97,'commodity','名詞','商品、日用品','Oil is a commodity traded around the world.'],
+[98,'subsidy','名詞','補助金','Farmers receive a government subsidy for growing wheat.'],
+[99,'tariff','名詞','関税','The government imposed a tariff on imported steel.'],
+[100,'monopoly','名詞','独占','The company held a monopoly on the local market.'],
+[101,'sanction','名詞','制裁','The United Nations imposed sanctions on the country.'],
+[102,'coalition','名詞','連合、連立','Several parties formed a coalition to win the election.'],
+[103,'casualty','名詞','死傷者','The accident resulted in several casualties.'],
+[104,'refuge','名詞','避難、避難所','Thousands of families sought refuge from the flooding.'],
+[105,'custody','名詞','保護、拘留','The children remained in the mother\'s custody.'],
+[106,'integrity','名詞','誠実さ、完全性','The judge is respected for her integrity.'],
+[107,'philanthropy','名詞','慈善活動','He is known for his philanthropy in education.'],
+[108,'solidarity','名詞','団結','The workers showed solidarity by going on strike together.'],
+[109,'inflation','名詞','インフレ','Rising inflation has pushed up the cost of living.'],
+[110,'infrastructure','名詞','インフラ、基盤','The city invested heavily in transport infrastructure.'],
+[111,'premise','名詞','前提','The argument is based on a false premise.'],
+[112,'paradigm','名詞','模範、枠組み','The discovery led to a new paradigm in physics.'],
+[113,'annihilate','動詞','全滅させる','The army threatened to annihilate the enemy forces.'],
+[114,'condemn','動詞','非難する','World leaders condemned the attack immediately.'],
+[115,'coincide','動詞','一致する、同時に起こる','Her vacation happened to coincide with the festival.'],
+[116,'confront','動詞','立ち向かう','She decided to confront the problem head-on.'],
+[117,'deploy','動詞','配備する','The government deployed troops to the border.'],
+[118,'depict','動詞','描写する','The painting depicts a quiet village scene.'],
+[119,'dispute','動詞','異議を唱える','The two countries dispute the ownership of the island.'],
+[120,'endure','動詞','耐える','The soldiers had to endure freezing temperatures.'],
+[121,'evoke','動詞','呼び起こす','The old photograph evoked many happy memories.'],
+[122,'fabricate','動詞','でっち上げる','He was accused of fabricating the evidence.'],
+[123,'hinder','動詞','妨げる','Heavy traffic hindered our progress across the city.'],
+[124,'impose','動詞','課す','The court imposed a heavy fine on the company.'],
+[125,'infringe','動詞','侵害する','Copying the song without permission would infringe the copyright.'],
+[126,'manipulate','動詞','操作する','He was accused of manipulating the stock price.'],
+[127,'nurture','動詞','育む','Good teachers nurture a love of learning in their students.'],
+[128,'prevail','動詞','普及する、勝る','Common sense finally prevailed in the discussion.'],
+[129,'reconcile','動詞','和解させる','The two brothers eventually reconciled after years apart.'],
+[130,'suppress','動詞','抑圧する','The government tried to suppress news of the protest.'],
+[131,'thrive','動詞','繁栄する','Small businesses continue to thrive in the neighborhood.'],
+[132,'adverse','形容詞','逆の、不利な','The drug can cause adverse side effects.'],
+[133,'arbitrary','形容詞','恣意的な','The rule seemed completely arbitrary to the employees.'],
+[134,'coherent','形容詞','首尾一貫した','He struggled to give a coherent explanation.'],
+[135,'compelling','形容詞','説得力のある','The lawyer presented a compelling argument.'],
+[136,'deliberate','形容詞','意図的な','It was a deliberate attempt to mislead investors.'],
+[137,'dubious','形容詞','疑わしい','She was dubious about the salesman\'s claims.'],
+[138,'erratic','形容詞','不規則な','His behavior became increasingly erratic.'],
+[139,'explicit','形容詞','明白な','The contract contains an explicit warning about the risks.'],
+[140,'formidable','形容詞','手強い','They faced a formidable opponent in the final match.'],
+[141,'indispensable','形容詞','不可欠な','Water is indispensable to human life.'],
+[142,'innate','形容詞','生まれつきの','She has an innate talent for music.'],
+[143,'lucrative','形容詞','儲かる','He left his job for a more lucrative offer.'],
+[144,'mandatory','形容詞','義務的な','Wearing a helmet is mandatory for all cyclists.'],
+[145,'obsolete','形容詞','廃れた','The old computer system is now obsolete.'],
+[146,'pervasive','形容詞','広く行き渡った','Social media has a pervasive influence on daily life.'],
+[147,'precarious','形容詞','不安定な','The company is in a precarious financial position.'],
+[148,'relentless','形容詞','執拗な','She made relentless efforts to improve her English.'],
+[149,'subtle','形容詞','微妙な','There was a subtle difference between the two designs.'],
+[150,'unprecedented','形容詞','前例のない','The region experienced unprecedented rainfall this year.']];
+
+var POS_MAP = {"名詞":"noun","動詞":"verb","形容詞":"adj"};
+var POS_LABEL = {"名詞":"名詞","動詞":"動詞","形容詞":"形容詞"};
+
+/* ---------------------------------------------------------------
+   2. DATE HELPERS (local calendar days)
+------------------------------------------------------------------*/
+function pad(n){return n<10?"0"+n:""+n;}
+function toISO(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());}
+function todayISO(){return toISO(new Date());}
+function addDays(iso, n){
+  var d = new Date(iso+"T00:00:00");
+  d.setDate(d.getDate()+n);
+  return toISO(d);
+}
+function daysBetween(a,b){
+  var da = new Date(a+"T00:00:00"), db_ = new Date(b+"T00:00:00");
+  return Math.round((db_-da)/86400000);
+}
+function fmtShortDate(iso){
+  var d = new Date(iso+"T00:00:00");
+  return (d.getMonth()+1)+"/"+d.getDate();
+}
+function weekdayJP(iso){
+  var w=["日","月","火","水","木","金","土"];
+  var d = new Date(iso+"T00:00:00");
+  return w[d.getDay()];
+}
+
+/* ---------------------------------------------------------------
+   3. STATE  (mirrors the persisted db document)
+   state.cards[no] = {ef, interval, reps, due, isNew, last}
+   state.meta = {streak, lastStudyDate, history:{iso:{reviewed,correct}}, newPerDay}
+------------------------------------------------------------------*/
+var state = null;
+var persistEnabled = false;
+var STORAGE_KEY = "eiken_junikkyu_srs_v1";
+
+function freshState(){
+  var cards = {};
+  var today = todayISO();
+  for (var i=0;i<WORDS.length;i++){
+    var no = WORDS[i][0];
+    cards[no] = {ef:2.5, interval:0, reps:0, due:today, isNew:true, last:null};
+  }
+  return {
+    cards: cards,
+    meta: {streak:0, lastStudyDate:null, history:{}, newPerDay:12}
+  };
+}
+
+/* Persistence: this file runs as a plain downloaded HTML page (opened
+   directly in a browser, no claude.ai host), so progress is saved to
+   this browser's localStorage. It stays on this device/browser only —
+   there is no account sync. `patch` is ignored; `state` already holds
+   the merged truth in memory, so we just persist the whole snapshot. */
+function persist(patch){
+  if (!persistEnabled) return;
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }catch(e){ console.error("srs save failed", e); }
+}
+
+/* ---------------------------------------------------------------
+   4. SM-2 SPACED REPETITION
+   rating: 0=again 1=hard 2=good 3=easy
+------------------------------------------------------------------*/
+function round2(x){return Math.round(x*100)/100;}
+
+function previewInterval(card, rating){
+  return simulate(card, rating).interval;
+}
+
+function simulate(card, rating){
+  var ef = card.ef, reps = card.reps;
+  var q = [2,3,4,5][rating];
+  var interval;
+  if (q < 3){
+    reps = 0;
+    interval = 1;
+  } else {
+    reps = reps + 1;
+    if (reps === 1) interval = 1;
+    else if (reps === 2) interval = 6;
+    else interval = Math.round(card.interval * ef);
+    if (rating === 3) interval = Math.round(interval * 1.3) + 1;
+  }
+  ef = ef + (0.1 - (5-q)*(0.08+(5-q)*0.02));
+  if (ef < 1.3) ef = 1.3;
+  interval = Math.max(1, interval);
+  var today = todayISO();
+  return {
+    ef: round2(ef),
+    interval: interval,
+    reps: reps,
+    due: addDays(today, interval),
+    isNew: false,
+    last: today
+  };
+}
+
+function deriveBucket(card){
+  if (card.isNew) return "new";
+  if (card.interval >= 21) return "mastered";
+  if (card.reps <= 1) return "learning";
+  return "review";
+}
+
+/* ---------------------------------------------------------------
+   5. SESSION QUEUE BUILDING
+------------------------------------------------------------------*/
+function shuffle(arr){
+  var a = arr.slice();
+  for (var i=a.length-1;i>0;i--){
+    var j = Math.floor(Math.random()*(i+1));
+    var t=a[i]; a[i]=a[j]; a[j]=t;
+  }
+  return a;
+}
+
+function interleave(reviews, news){
+  reviews = shuffle(reviews);
+  if (news.length===0) return reviews;
+  if (reviews.length===0) return news.slice();
+  var result = [];
+  var gap = Math.max(1, Math.round(reviews.length/news.length));
+  var ni=0;
+  for (var i=0;i<reviews.length;i++){
+    result.push(reviews[i]);
+    if ((i+1)%gap===0 && ni<news.length) result.push(news[ni++]);
+  }
+  while(ni<news.length) result.push(news[ni++]);
+  return result;
+}
+
+var session = { queue: [], index: 0, reviewed: 0, correct: 0, active:false };
+
+function newIntroducedToday(){
+  var h = state.meta.history[todayISO()];
+  return h && h.newIntroduced ? h.newIntroduced : 0;
+}
+
+function buildSession(){
+  var today = todayISO();
+  var reviews = [], news = [];
+  for (var i=0;i<WORDS.length;i++){
+    var no = WORDS[i][0];
+    var c = state.cards[no];
+    if (!c) continue;
+    if (c.isNew) news.push(no);
+    else if (c.due <= today) reviews.push(no);
+  }
+  var budget = Math.max(0, state.meta.newPerDay - newIntroducedToday());
+  news = news.slice(0, budget);
+  session.queue = interleave(reviews, news);
+  session.index = 0;
+  session.reviewed = 0;
+  session.correct = 0;
+  session.active = session.queue.length > 0;
+}
+
+/* ---------------------------------------------------------------
+   6. STUDY VIEW RENDERING
+------------------------------------------------------------------*/
+var studyArea = document.getElementById("studySessionArea");
+var flipped = false;
+
+function wordByNo(no){
+  for (var i=0;i<WORDS.length;i++) if (WORDS[i][0]===no) return WORDS[i];
+  return null;
+}
+
+function highlightExample(example, word){
+  try{
+    var re = new RegExp("\\b"+word.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"\\w*\\b","ig");
+    return example.replace(re, function(m){ return "<mark>"+m+"</mark>"; });
+  }catch(e){ return example; }
+}
+
+function renderStudy(){
+  if (!session.active || session.index >= session.queue.length){
+    renderSessionEnd();
+    return;
+  }
+  var no = session.queue[session.index];
+  var w = wordByNo(no);
+  var card = state.cards[no];
+  flipped = false;
+
+  var total = session.queue.length;
+  var doneNow = session.index;
+
+  var bucketColor = {new:"var(--sky)",learning:"var(--amber)",review:"var(--indigo)",mastered:"var(--sage)"}[deriveBucket(card)];
+  var posClass = POS_MAP[w[2]] || "noun";
+
+  var html = '';
+  html += '<div class="study-stat-row">';
+  html += '<div class="study-stat"><b>'+(doneNow)+' / '+total+'</b><span>このセッション</span></div>';
+  html += '<div class="study-stat"><b>'+session.correct+'</b><span>正解</span></div>';
+  html += '<div class="study-stat"><b>'+countDueToday()+'</b><span>本日の復習</span></div>';
+  html += '</div>';
+  html += '<div class="progress-track"><div class="progress-fill" style="width:'+Math.round(doneNow/total*100)+'%"></div></div>';
+
+  html += '<div class="stage"><div class="flashcard" id="flashcard">';
+  html += '  <div class="face face-front">';
+  html += '    <div class="card-tag-row"><span class="pos-badge '+posClass+'">'+POS_LABEL[w[2]]+'</span><span class="card-state-dot" style="background:'+bucketColor+'"></span><span class="card-no">No.'+w[0]+'</span></div>';
+  html += '    <div class="word-display">'+w[1]+'</div>';
+  html += '    <button class="show-answer-btn" id="showAnswerBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>意味を見る</button>';
+  html += '    <div class="tap-hint">カードをタップ、または <kbd>Space</kbd></div>';
+  html += '  </div>';
+  html += '  <div class="face face-back">';
+  html += '    <div class="card-tag-row" style="position:static;margin-bottom:14px;"><span class="pos-badge '+posClass+'">'+POS_LABEL[w[2]]+'</span><span class="card-no">No.'+w[0]+'</span></div>';
+  html += '    <div class="back-word">'+w[1]+'</div>';
+  html += '    <div class="back-meaning">'+w[3]+'</div>';
+  html += '    <div class="back-example">'+highlightExample(w[4], w[1])+'</div>';
+  html += '  </div>';
+  html += '</div></div>';
+
+  html += '<div id="rateArea"></div>';
+  html += '<div class="hint-row" id="hintRow" style="visibility:hidden;">評価: <kbd>1</kbd> もう一度 &nbsp;<kbd>2</kbd> 難しい &nbsp;<kbd>3</kbd> 普通 &nbsp;<kbd>4</kbd> 簡単</div>';
+
+  studyArea.innerHTML = html;
+
+  document.getElementById("flashcard").addEventListener("click", flipCard);
+  document.getElementById("showAnswerBtn").addEventListener("click", function(e){ e.stopPropagation(); flipCard(); });
+}
+
+function flipCard(){
+  if (flipped) return;
+  flipped = true;
+  document.getElementById("flashcard").classList.add("flipped");
+  document.getElementById("hintRow").style.visibility = "visible";
+  var no = session.queue[session.index];
+  var card = state.cards[no];
+  var labels = [["again","もう一度"],["hard","難しい"],["good","普通"],["easy","簡単"]];
+  var html = '<div class="rate-row">';
+  for (var i=0;i<4;i++){
+    var iv = previewInterval(card, i);
+    var ivLabel = iv>=30 ? Math.round(iv/30*10)/10+"ヶ月" : iv+"日";
+    html += '<button class="rate-btn '+labels[i][0]+'" data-r="'+i+'"><span class="k">'+labels[i][1]+'</span><span class="iv">'+ivLabel+'後</span></button>';
+  }
+  html += '</div>';
+  document.getElementById("rateArea").innerHTML = html;
+  var btns = document.querySelectorAll(".rate-btn");
+  for (var j=0;j<btns.length;j++){
+    btns[j].addEventListener("click", function(e){
+      e.stopPropagation();
+      rate(parseInt(this.getAttribute("data-r"),10));
+    });
+  }
+}
+
+function rate(r){
+  var no = session.queue[session.index];
+  var card = state.cards[no];
+  var updated = simulate(card, r);
+  state.cards[no] = updated;
+
+  session.reviewed++;
+  if (r>=2) session.correct++;
+
+  var today = todayISO();
+  if (!state.meta.history[today]) state.meta.history[today] = {reviewed:0, correct:0, newIntroduced:0};
+  state.meta.history[today].reviewed++;
+  if (r>=2) state.meta.history[today].correct++;
+  if (card.isNew) state.meta.history[today].newIntroduced = (state.meta.history[today].newIntroduced||0)+1;
+
+  if (state.meta.lastStudyDate !== today){
+    var y = addDays(today,-1);
+    state.meta.streak = (state.meta.lastStudyDate === y) ? state.meta.streak+1 : 1;
+    state.meta.lastStudyDate = today;
+  }
+
+  persist({
+    cards: mkPatch(no, updated),
+    meta: { streak: state.meta.streak, lastStudyDate: state.meta.lastStudyDate,
+            history: mkPatch(today, state.meta.history[today]) }
+  });
+
+  session.index++;
+  renderStudy();
+  refreshChrome();
+}
+
+function mkPatch(key, val){
+  var o = {}; o[key] = val; return o;
+}
+
+function countDueToday(){
+  var today = todayISO(), n=0;
+  for (var i=0;i<WORDS.length;i++){
+    var c = state.cards[WORDS[i][0]];
+    if (c && !c.isNew && c.due<=today) n++;
+  }
+  return n;
+}
+function countNewAvailable(){
+  var n=0;
+  for (var i=0;i<WORDS.length;i++){ if (state.cards[WORDS[i][0]].isNew) n++; }
+  return n;
+}
+
+function renderSessionEnd(){
+  var acc = session.reviewed ? Math.round(session.correct/session.reviewed*100) : 0;
+  var dueLeft = countDueToday();
+  var newLeft = countNewAvailable();
+  var html = '';
+  if (session.reviewed === 0 && dueLeft === 0){
+    html += '<div class="empty-state">';
+    html += '<div class="glyph">🌙</div>';
+    html += '<h2>今日の復習はありません</h2>';
+    html += '<p>すべてのカードが復習済みです。次の復習日まで、脳に記憶を定着させる時間をあげましょう。</p>';
+    if (newLeft>0){
+      html += '<button class="primary-btn" id="extraNewBtn">新しい単語を追加で学ぶ（+5）</button>';
+    } else {
+      html += '<div style="font-family:JetBrains Mono,monospace;font-size:13px;color:var(--ink-faint);">全150語を学習済みです</div>';
+    }
+    html += '</div>';
+  } else {
+    html += '<div class="session-summary">';
+    html += '<div class="glyph">🌱</div>';
+    html += '<h2>セッション完了！</h2>';
+    html += '<p>睡眠中に記憶は整理されます。今日はここまでにしましょう。</p>';
+    html += '<div class="session-figs">';
+    html += '<div><b>'+session.reviewed+'</b><span>復習した語</span></div>';
+    html += '<div><b>'+acc+'%</b><span>正答率</span></div>';
+    html += '<div><b>'+state.meta.streak+'</b><span>連続日数</span></div>';
+    html += '</div>';
+    if (dueLeft>0){
+      html += '<button class="primary-btn" id="continueBtn">続けて復習する（残り'+dueLeft+'）</button>';
+    } else if (newLeft>0){
+      html += '<button class="primary-btn" id="extraNewBtn">新しい単語を追加で学ぶ（+5）</button>';
+    } else {
+      html += '<button class="ghost-btn" id="gotoStatsBtn">統計を見る</button>';
+    }
+    html += '</div>';
+  }
+  studyArea.innerHTML = html;
+  var cb = document.getElementById("continueBtn");
+  if (cb) cb.addEventListener("click", function(){ buildSession(); renderStudy(); });
+  var eb = document.getElementById("extraNewBtn");
+  if (eb) eb.addEventListener("click", function(){
+    state.meta.newPerDay += 5;
+    persist({meta:{newPerDay: state.meta.newPerDay}});
+    buildSession(); renderStudy();
+  });
+  var gb = document.getElementById("gotoStatsBtn");
+  if (gb) gb.addEventListener("click", function(){ switchView("stats"); });
+  refreshChrome();
+}
+
+document.addEventListener("keydown", function(e){
+  var studyVisible = !document.getElementById("view-study").hidden;
+  if (!studyVisible || !session.active || session.index>=session.queue.length) return;
+  if (e.code === "Space"){ e.preventDefault(); if(!flipped) flipCard(); }
+  if (flipped && ["1","2","3","4"].indexOf(e.key)!==-1){
+    rate(parseInt(e.key,10)-1);
+  }
+});
+
+/* ---------------------------------------------------------------
+   7. TOP CHROME  (streak pill + nav badge)
+------------------------------------------------------------------*/
+function refreshChrome(){
+  document.getElementById("streakVal").textContent = state.meta.streak;
+  var due = countDueToday() + Math.min(countNewAvailable(), Math.max(0,state.meta.newPerDay-newIntroducedToday()));
+  var badge = document.getElementById("dueBadge");
+  if (due>0){ badge.hidden=false; badge.textContent = due>99?"99+":due; }
+  else { badge.hidden = true; }
+}
+
+/* ---------------------------------------------------------------
+   8. STATS VIEW
+------------------------------------------------------------------*/
+function renderStats(){
+  var buckets = {new:0,learning:0,review:0,mastered:0};
+  for (var i=0;i<WORDS.length;i++){
+    buckets[deriveBucket(state.cards[WORDS[i][0]])]++;
+  }
+  document.getElementById("statDue").textContent = countDueToday();
+  document.getElementById("statMastered").textContent = buckets.mastered;
+  document.getElementById("statStreak").textContent = state.meta.streak;
+
+  var totalReviewed=0, totalCorrect=0;
+  var today = todayISO();
+  for (var k in state.meta.history){
+    if (daysBetween(k, today) <= 30){
+      totalReviewed += state.meta.history[k].reviewed||0;
+      totalCorrect += state.meta.history[k].correct||0;
+    }
+  }
+  document.getElementById("statAcc").textContent = totalReviewed ? Math.round(totalCorrect/totalReviewed*100)+"%" : "–";
+
+  // forecast next 7 days
+  var counts = [0,0,0,0,0,0,0];
+  for (var j=0;j<WORDS.length;j++){
+    var c = state.cards[WORDS[j][0]];
+    if (c.isNew) continue;
+    var d = daysBetween(today, c.due);
+    if (d>=0 && d<7) counts[d]++;
+  }
+  var maxC = Math.max(1, Math.max.apply(null, counts));
+  var frow = document.getElementById("forecastRow");
+  var fh = '';
+  for (var f=0; f<7; f++){
+    var iso = addDays(today, f);
+    var h = Math.max(3, Math.round(counts[f]/maxC*84));
+    fh += '<div class="forecast-col"><span class="n">'+counts[f]+'</span><div class="forecast-bar" style="height:'+Math.max(h,84)+'px"><b style="height:'+h+'px"></b></div><span class="d">'+(f===0?'今日':weekdayJP(iso))+'</span></div>';
+  }
+  frow.innerHTML = fh;
+
+  // mastery donut
+  var order = [["new","未学習","var(--sky)"],["learning","学習中","var(--amber)"],["review","復習中","var(--indigo)"],["mastered","習得済み","var(--sage)"]];
+  var total = WORDS.length;
+  var grad = [], acc=0;
+  order.forEach(function(o){
+    var pct = buckets[o[0]]/total*100;
+    grad.push(o[2]+' '+acc+'% '+(acc+pct)+'%');
+    acc += pct;
+  });
+  document.getElementById("masteryDonut").style.background = "conic-gradient("+grad.join(",")+")";
+  document.getElementById("masteryTotal").textContent = total;
+  var legendHtml = '';
+  order.forEach(function(o){
+    legendHtml += '<div class="legend-row"><span class="legend-dot" style="background:'+o[2]+'"></span>'+o[1]+'<b>'+buckets[o[0]]+'</b></div>';
+  });
+  document.getElementById("masteryLegend").innerHTML = legendHtml;
+
+  // heatmap: last 28 days
+  var hm = '';
+  var maxReviewed = 1;
+  for (var d2=27; d2>=0; d2--){
+    var iso2 = addDays(today, -d2);
+    var rv = (state.meta.history[iso2]&&state.meta.history[iso2].reviewed)||0;
+    if (rv>maxReviewed) maxReviewed = rv;
+  }
+  for (var d=27; d>=0; d--){
+    var iso3 = addDays(today, -d);
+    var rv2 = (state.meta.history[iso3]&&state.meta.history[iso3].reviewed)||0;
+    var alpha = rv2===0 ? 0 : 0.25 + 0.75*Math.min(1, rv2/maxReviewed);
+    var bg = rv2===0 ? 'var(--line)' : 'color-mix(in srgb, var(--sage) '+Math.round(alpha*100)+'%, var(--line))';
+    hm += '<div class="heat-cell" style="background:'+bg+'" title="'+iso3+' · '+rv2+'語"></div>';
+  }
+  document.getElementById("heatmap").innerHTML = hm;
+  document.getElementById("heatmapStart").textContent = fmtShortDate(addDays(today,-27));
+}
+
+/* ---------------------------------------------------------------
+   9. WORD LIST VIEW
+------------------------------------------------------------------*/
+var listFilters = { q:"", pos:"all", state:"all" };
+
+function renderPosChips(){
+  var defs = [["all","すべて"],["名詞","名詞"],["動詞","動詞"],["形容詞","形容詞"]];
+  var html='';
+  defs.forEach(function(d){
+    html += '<button class="chip '+(listFilters.pos===d[0]?'active':'')+'" data-pos="'+d[0]+'">'+d[1]+'</button>';
+  });
+  document.getElementById("posChips").innerHTML = html;
+  var chips = document.querySelectorAll("#posChips .chip");
+  for (var i=0;i<chips.length;i++){
+    chips[i].addEventListener("click", function(){ listFilters.pos=this.getAttribute("data-pos"); renderPosChips(); renderStateChips(); renderList(); });
+  }
+}
+function renderStateChips(){
+  var defs = [["all","すべて"],["new","未学習"],["learning","学習中"],["review","復習中"],["mastered","習得済み"]];
+  var html='';
+  defs.forEach(function(d){
+    html += '<button class="chip '+(listFilters.state===d[0]?'active':'')+'" data-st="'+d[0]+'">'+d[1]+'</button>';
+  });
+  document.getElementById("stateChips").innerHTML = html;
+  var chips = document.querySelectorAll("#stateChips .chip");
+  for (var i=0;i<chips.length;i++){
+    chips[i].addEventListener("click", function(){ listFilters.state=this.getAttribute("data-st"); renderStateChips(); renderList(); });
+  }
+}
+
+function renderList(){
+  var q = listFilters.q.trim().toLowerCase();
+  var stateLabel = {new:"未学習",learning:"学習中",review:"復習中",mastered:"習得済み"};
+  var rows = '';
+  var shown = 0;
+  for (var i=0;i<WORDS.length;i++){
+    var w = WORDS[i];
+    var card = state.cards[w[0]];
+    var bucket = deriveBucket(card);
+    if (listFilters.pos!=="all" && w[2]!==listFilters.pos) continue;
+    if (listFilters.state!=="all" && bucket!==listFilters.state) continue;
+    if (q && w[1].toLowerCase().indexOf(q)===-1 && w[3].indexOf(q)===-1) continue;
+    shown++;
+    var dueTxt = card.isNew ? "未学習" : (card.due<=todayISO() ? "復習可" : fmtShortDate(card.due)+"予定");
+    rows += '<div class="word-row"><span class="wr-no">'+w[0]+'</span><div class="wr-main"><div class="wr-word">'+w[1]+'</div><div class="wr-meaning">'+w[3]+'</div></div><span class="wr-state '+bucket+'">'+stateLabel[bucket]+'</span></div>';
+  }
+  if (shown===0) rows = '<div class="list-empty">該当する単語がありません</div>';
+  document.getElementById("wordListArea").innerHTML = rows;
+}
+
+document.getElementById("searchInput").addEventListener("input", function(){
+  listFilters.q = this.value;
+  renderList();
+});
+
+/* ---------------------------------------------------------------
+   10. VIEW SWITCHING
+------------------------------------------------------------------*/
+function switchView(name){
+  ["study","stats","list"].forEach(function(v){
+    document.getElementById("view-"+v).hidden = (v!==name);
+    document.getElementById("nav"+v.charAt(0).toUpperCase()+v.slice(1)).classList.toggle("active", v===name);
+  });
+  if (name==="stats") renderStats();
+  if (name==="list"){ renderPosChips(); renderStateChips(); renderList(); }
+}
+document.getElementById("navStudy").addEventListener("click", function(){ switchView("study"); });
+document.getElementById("navStats").addEventListener("click", function(){ switchView("stats"); });
+document.getElementById("navList").addEventListener("click", function(){ switchView("list"); });
+
+/* ---------------------------------------------------------------
+   11. BOOT / DB WIRING
+------------------------------------------------------------------*/
+function boot(){
+  buildSession();
+  renderStudy();
+  refreshChrome();
+}
+
+function startWithLocalState(){
+  state = freshState();
+  persistEnabled = false;
+  boot();
+}
+
+(function(){
+  var saved = null;
+  try{
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) saved = JSON.parse(raw);
+  }catch(e){ saved = null; }
+
+  if (saved && saved.cards){
+    // merge with WORDS in case the list changed; keep unknown-safe defaults
+    var cards = {};
+    var today = todayISO();
+    for (var i=0;i<WORDS.length;i++){
+      var no = WORDS[i][0];
+      cards[no] = saved.cards[no] || {ef:2.5, interval:0, reps:0, due:today, isNew:true, last:null};
+    }
+    state = { cards: cards, meta: Object.assign({streak:0,lastStudyDate:null,history:{},newPerDay:12}, saved.meta||{}) };
+    persistEnabled = true;
+    boot();
+  } else {
+    state = freshState();
+    persistEnabled = true;
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+    boot();
+  }
+
+  // localStorage can be unavailable or blocked (private browsing, locked-down
+  // browser settings) — fall back to in-memory-only so the app still works.
+  try{
+    var t = "__srs_probe__";
+    localStorage.setItem(t, "1");
+    localStorage.removeItem(t);
+  }catch(e){
+    persistEnabled = false;
+  }
+})();
+
+})();
+</script>
+</body>
+</html>
